@@ -13,9 +13,9 @@ namespace Forecaster.Server
     {
         static int Main(string[] args)
         {
-            Initializer.Initialize();
+            //Initializer.Initialize();
 
-            var stockList = FileManager.GetStockList();
+            //var stockList = FileManager.GetStockList();
             return 0;
         }
     }

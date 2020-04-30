@@ -16,6 +16,7 @@ namespace Forecaster.Server
             //Initializer.Initialize();
 
             //var stockList = FileManager.GetStockList();
+            AsynchronousSocketListener.StartListening();
             return 0;
         }
     }

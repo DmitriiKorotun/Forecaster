@@ -50,6 +50,7 @@
     <Compile Include="Local\Initializer.cs" />
     <Compile Include="Local\Logging\ILogger.cs" />
     <Compile Include="Local\Logging\Logger.cs" />
+    <Compile Include="Network\RequestHandler.cs" />
     <Compile Include="Prediction\PredictionController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

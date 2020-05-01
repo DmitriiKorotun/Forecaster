@@ -1,4 +1,6 @@
 ﻿using Forecaster.Net;
+using Forecaster.Net.Requests;
+using Forecaster.Server.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,19 +101,22 @@ namespace Forecaster.Server
                     state.buffer, 0, bytesRead));
 
                 // Check for end-of-file tag. If it is not there, read
-                // more data.  
-                content = state.sb.ToString();
-                if (content.IndexOf("<EOF>") > -1)
+                // more data.
+
+                int dataLength = RequestHandler.ReadRequestLength(state.buffer) + sizeof(int);
+
+                if (bytesRead >= dataLength)
                 {
                     // All the data has been read from the
                     // client. Display it on the console.
-                    byte[] wordBytes = new byte[content.IndexOf("<EOF>")];
-                    Array.Copy(state.buffer, wordBytes, content.IndexOf("<EOF>"));
-                    Request request = new RequestManager().RestoreFromBytes<Request>(wordBytes);
+                    byte[] data = state.buffer.Take(dataLength).ToArray();
+
+                    FileTransferRequest request = RequestHandler.RestoreRequest<FileTransferRequest>(data);
+
                     Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                         content.Length, content);
                     // Echo the data back to the client.  
-                    Send(handler, content);
+                    Send(handler, "Done");
                 }
                 else
                 {

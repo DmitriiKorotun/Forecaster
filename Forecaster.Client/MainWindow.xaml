@@ -7,9 +7,30 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="135,13,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="215,13,0,0" VerticalAlignment="Top" Width="75"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"></RowDefinition>
+            <RowDefinition Height="70*"></RowDefinition>
+            <RowDefinition Height="20*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="8*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.ColumnSpan="2">
+            <MenuItem Header="File"/>
+        </Menu>
+        <Grid HorizontalAlignment="Left" Width="100"/>
+        <TextBox Name="tb_fileToUpload" HorizontalAlignment="Left" Height="23" Margin="10,23,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsReadOnly="True"/>
+        <Button Content="Chose file" HorizontalAlignment="Left" Margin="55,166,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="Upload" HorizontalAlignment="Left" Margin="45,89,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+        
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="80*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Padding="5, 0, 0, 0" TextWrapping="Wrap" Text="Output"/>
+            <TextBlock Grid.Row="1" Margin="5" TextWrapping="Wrap" Background="#FFF3F3F3"/>
+        </Grid>
     </Grid>
 </Window>

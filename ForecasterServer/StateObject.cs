@@ -17,5 +17,11 @@ namespace Forecaster.Server
         public byte[] buffer = new byte[BufferSize];
         // Received data string.  
         public StringBuilder sb = new StringBuilder();
+
+        // Received data bytes.  
+        public List<byte[]> receivedData = new List<byte[]>();
+
+        public int totalBytesRead = 0;
+        public int totalBytesExpected = 0;
     }
 }

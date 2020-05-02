@@ -100,21 +100,26 @@ namespace Forecaster.Server
                 state.sb.Append(Encoding.ASCII.GetString(
                     state.buffer, 0, bytesRead));
 
+                state.receivedData.Add(state.buffer.Take(bytesRead).ToArray());
+
                 // Check for end-of-file tag. If it is not there, read
                 // more data.
 
-                int dataLength = RequestHandler.ReadRequestLength(state.buffer) + sizeof(int);
+                if (state.totalBytesExpected == 0)
+                    state.totalBytesExpected = RequestHandler.ReadRequestLength(state.buffer) + sizeof(int);
 
-                if (bytesRead >= dataLength)
+                state.totalBytesRead += bytesRead;
+
+                if (state.totalBytesRead >= state.totalBytesExpected)
                 {
                     // All the data has been read from the
                     // client. Display it on the console.
-                    byte[] data = state.buffer.Take(dataLength).ToArray();
+                    byte[] data = state.receivedData.SelectMany(a => a).ToArray();
 
                     FileTransferRequest request = RequestHandler.RestoreRequest<FileTransferRequest>(data);
 
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                        content.Length, content);
+                    Console.WriteLine("Read {0} bytes from socket.",
+                        data.Length);
                     // Echo the data back to the client.  
                     Send(handler, "Done");
                 }
@@ -124,6 +129,10 @@ namespace Forecaster.Server
                     handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                     new AsyncCallback(ReadCallback), state);
                 }
+            }
+            else
+            {
+                Send(handler, "Done");
             }
         }
 

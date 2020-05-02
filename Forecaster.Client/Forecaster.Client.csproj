@@ -58,7 +58,7 @@
     <Compile Include="AsynchronousClient.cs" />
     <Compile Include="ClientModelController.cs" />
     <Compile Include="Logging\RamLogger.cs" />
-    <Compile Include="Network\test.cs" />
+    <Compile Include="Network\ServerController.cs" />
     <Compile Include="StateObject.cs" />
     <Page Include="ClientWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

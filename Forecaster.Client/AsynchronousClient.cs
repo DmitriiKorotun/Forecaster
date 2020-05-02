@@ -28,6 +28,8 @@ namespace Forecaster.Client
 
         private Socket Client { get; set; }
 
+        public bool IsResponseReceived { get; set; }
+
         public void Connect(string hostName)
         {
             // Connect to a remote device.  
@@ -94,7 +96,7 @@ namespace Forecaster.Client
         {
             // Begin sending the data to the remote device.  
             client.BeginSend(data, 0, data.Length, 0,
-                new AsyncCallback(SendCallback), client);
+               new AsyncCallback(SendCallback), client);
         }
 
         private void SendCallback(IAsyncResult ar)
@@ -111,8 +113,6 @@ namespace Forecaster.Client
 
                 // Signal that all bytes have been sent.  
                 sendDone.Set();
-
-                this.Disconnect();
             }
             catch (Exception e)
             {
@@ -122,35 +122,36 @@ namespace Forecaster.Client
             }
         }
 
-        public void ReceiveData()
+        public byte[] ReceiveResponse()
         {
+            byte[] responseBytes;
+
+            // Create the state object.  
+            StateObject state = new StateObject();
+            state.workSocket = Client;
+
             // Receive the response from the remote device.  
-            Receive(Client);
-            receiveDone.WaitOne();
+            Receive(Client, state);
+
+            if (receiveDone.WaitOne(5000))
+            {
+                responseBytes = state.receivedData.SelectMany(a => a).ToArray();
+            }
+            else
+                throw new TimeoutException("Server is not responding");
+
+            Disconnect();
+
+            return responseBytes;
         }
 
-        public void Disconnect()
-        {
-            try
-            {
-                Client.Shutdown(SocketShutdown.Both);
-                Client.Close();
-
-                RamLogger.Log("Disconnected from server");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private void Receive(Socket client)
+        private void Receive(Socket client, StateObject state)
         {
             try
             {
                 // Create the state object.  
-                StateObject state = new StateObject();
-                state.workSocket = client;
+                //StateObject state = new StateObject();
+                //state.workSocket = client;
 
                 // Begin receiving the data from the remote device.  
                 client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
@@ -159,6 +160,8 @@ namespace Forecaster.Client
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+
+                throw e;
             }
         }
 
@@ -177,7 +180,7 @@ namespace Forecaster.Client
                 if (bytesRead > 0)
                 {
                     // There might be more data, so store the data received so far.  
-                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+                    state.receivedData.Add((byte[])state.buffer.Clone());
 
                     // Get the rest of the data.  
                     Client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
@@ -186,10 +189,11 @@ namespace Forecaster.Client
                 else
                 {
                     // All the data has arrived; put it in response.  
-                    if (state.sb.Length > 1)
-                    {
-                        RamLogger.Log("Received response: " + state.sb.ToString());
-                    }
+                    //if (state.sb.Length > 1)
+                    //{
+                    //    RamLogger.Log("Received response: " + state.sb.ToString());
+                    //}
+
                     // Signal that all bytes have been received.  
                     receiveDone.Set();
                 }
@@ -200,6 +204,20 @@ namespace Forecaster.Client
             }
         }
 
+        public void Disconnect()
+        {
+            try
+            {
+                Client.Shutdown(SocketShutdown.Both);
+                Client.Close();
+
+                RamLogger.Log("Disconnected from server");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public void Dispose()
         {

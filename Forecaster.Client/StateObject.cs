@@ -15,7 +15,7 @@ namespace Forecaster.Client
         public const int BufferSize = 256;
         // Receive buffer.  
         public byte[] buffer = new byte[BufferSize];
-        // Received data string.  
-        public StringBuilder sb = new StringBuilder();
+        // Received data bytes.  
+        public List<byte[]> receivedData = new List<byte[]>();
     }
 }

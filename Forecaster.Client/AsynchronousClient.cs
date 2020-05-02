@@ -1,4 +1,5 @@
-﻿using Forecaster.Net;
+﻿using Forecaster.Client.Logging;
+using Forecaster.Net;
 using Forecaster.Net.Requests;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Client
 {
-    public class AsynchronousClient2 : IDisposable
+    public class AsynchronousClient
     {
         // The port number for the remote device.  
         private const int port = 11000;
@@ -27,7 +28,7 @@ namespace Forecaster.Client
 
         private Socket Client { get; set; }
 
-        public void ConnectClient(string hostName)
+        public void Connect(string hostName)
         {
             // Connect to a remote device.  
             try
@@ -42,8 +43,7 @@ namespace Forecaster.Client
                     SocketType.Stream, ProtocolType.Tcp);
 
                 // Connect to the remote endpoint.  
-                Client.BeginConnect(remoteEP,
-                    new AsyncCallback(ConnectCallback), Client);
+                Client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), Client);
 
                 connectDone.WaitOne();
             }
@@ -63,6 +63,7 @@ namespace Forecaster.Client
                 // Complete the connection.  
                 Client.EndConnect(ar);
 
+                RamLogger.Log("Socket connected to " + Client.RemoteEndPoint.ToString());
                 Console.WriteLine("Socket connected to {0}",
                     Client.RemoteEndPoint.ToString());
 
@@ -79,13 +80,45 @@ namespace Forecaster.Client
         {
             try
             {
-                FileTransferRequest request = new FileTransferRequest(data);
-                Send(Client, request);
+                Send(Client, data);
+
                 sendDone.WaitOne();
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        private void Send(Socket client, byte[] data)
+        {
+            // Begin sending the data to the remote device.  
+            client.BeginSend(data, 0, data.Length, 0,
+                new AsyncCallback(SendCallback), client);
+        }
+
+        private void SendCallback(IAsyncResult ar)
+        {
+            try
+            {
+                // Retrieve the socket from the state object.  
+                Client = (Socket)ar.AsyncState;
+
+                // Complete sending the data to the remote device.  
+                int bytesSent = Client.EndSend(ar);
+                RamLogger.Log("Sent " + bytesSent + " bytes to server");
+                Console.WriteLine("Sent {0} bytes to server.", bytesSent);
+
+                // Signal that all bytes have been sent.  
+                sendDone.Set();
+
+                this.Disconnect();
+            }
+            catch (Exception e)
+            {
+                this.Disconnect();
+
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -102,6 +135,8 @@ namespace Forecaster.Client
             {
                 Client.Shutdown(SocketShutdown.Both);
                 Client.Close();
+
+                RamLogger.Log("Disconnected from server");
             }
             catch (Exception ex)
             {
@@ -153,7 +188,7 @@ namespace Forecaster.Client
                     // All the data has arrived; put it in response.  
                     if (state.sb.Length > 1)
                     {
-                        ;
+                        RamLogger.Log("Received response: " + state.sb.ToString());
                     }
                     // Signal that all bytes have been received.  
                     receiveDone.Set();
@@ -165,42 +200,6 @@ namespace Forecaster.Client
             }
         }
 
-        private void Send<T>(Socket client, T request) where T : Request
-        {
-            try
-            {
-                // Convert the string data to byte data using ASCII encoding.
-                var byteData = new RequestManager().CreateByteRequest(request);
-
-                // Begin sending the data to the remote device.  
-                client.BeginSend(byteData, 0, byteData.Length, 0,
-                    new AsyncCallback(SendCallback), client);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private void SendCallback(IAsyncResult ar)
-        {
-            try
-            {
-                // Retrieve the socket from the state object.  
-                Client = (Socket)ar.AsyncState;
-
-                // Complete sending the data to the remote device.  
-                int bytesSent = Client.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to server.", bytesSent);
-
-                // Signal that all bytes have been sent.  
-                sendDone.Set();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
 
         public void Dispose()
         {

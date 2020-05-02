@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Client.Network
 {
-    class test
+    class ServerController
     {
         public byte[] SendFile(string path)
         {

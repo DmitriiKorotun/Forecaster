@@ -1,4 +1,5 @@
-﻿using Forecaster.Net;
+﻿using Forecaster.Client.Network;
+using Forecaster.Net;
 using Forecaster.Net.Requests;
 using Microsoft.Win32;
 using System;
@@ -51,19 +52,30 @@ namespace Forecaster.Client
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            AsynchronousClient client = new AsynchronousClient();
+            try
+            {
+                if (string.IsNullOrEmpty(tb_fileToUpload.Text))
+                    throw new ArgumentException("Path to file can not be empty");
 
-            client.Connect(Dns.GetHostName());
+                ServerController.SendFile(tb_fileToUpload.Text, this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            //AsynchronousClient client = new AsynchronousClient();
 
-            byte[] fileBytes = File.ReadAllBytes(tb_fileToUpload.Text);
+            //client.Connect(Dns.GetHostName());
 
-            FileTransferRequest request = new FileTransferRequest(fileBytes);
+            //byte[] fileBytes = File.ReadAllBytes(tb_fileToUpload.Text);
 
-            RequestManager requestManager = new RequestManager();
+            //FileTransferRequest request = new FileTransferRequest(fileBytes);
 
-            byte[] requestBytes = requestManager.CreateByteRequest(request);
+            //RequestManager requestManager = new RequestManager();
 
-            client.SendData(requestBytes);
+            //byte[] requestBytes = requestManager.CreateByteRequest(request);
+
+            //client.SendData(requestBytes);
 
         }
     }

@@ -14,12 +14,12 @@ namespace Forecaster.Client.Network
 {
     public static class ServerController
     {
-        public static byte[] SendFile(string path, ClientWindow window)
+        public static byte[] SendFile(string path, ushort selectedAlgortihm, ClientWindow window)
         {
             try
             {
                 byte[] fileBytes = ReadFile(path),
-                    requestBytes = CreateFTRequestBytes(fileBytes);
+                    requestBytes = CreateFTRequestBytes(fileBytes, selectedAlgortihm);
 
                 using (AsynchronousClient client = new AsynchronousClient())
                 {
@@ -50,9 +50,9 @@ namespace Forecaster.Client.Network
 
         }
 
-        private static byte[] CreateFTRequestBytes(byte[] fileBytes)
+        private static byte[] CreateFTRequestBytes(byte[] fileBytes, ushort selectedAlgorithm)
         {
-            FileTransferRequest request = new FileTransferRequest(fileBytes);
+            FileTransferRequest request = new FileTransferRequest(fileBytes, selectedAlgorithm);
 
             return GetFTRequestBytes(request);
         }

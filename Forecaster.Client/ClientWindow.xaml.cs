@@ -27,6 +27,14 @@ namespace Forecaster.Client
     /// </summary>
     public partial class ClientWindow : Window
     {
+        public enum PredictionAlgorithm : ushort
+        {
+            MovingAverage = 1,
+            LinearRegression = 2,
+            KNearest = 4,
+            LSTM = 128
+        }
+
         public ClientWindow()
         {
             InitializeComponent();
@@ -40,6 +48,19 @@ namespace Forecaster.Client
                 }
             });
             task.Start();
+
+            InitAlgorithmsCB();
+        }
+
+        private void InitAlgorithmsCB()
+        {
+            Dictionary<ushort, string> items = new Dictionary<ushort, string> {
+                { (ushort)PredictionAlgorithm.MovingAverage, "Moving Average" },
+                { (ushort)PredictionAlgorithm.LinearRegression, "Linear Regression" },
+                { (ushort)PredictionAlgorithm.LSTM, "LSTM" }
+            };
+            cb_algList.ItemsSource = items;
+            cb_algList.SelectedIndex = 0;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -57,7 +78,9 @@ namespace Forecaster.Client
                 if (string.IsNullOrEmpty(tb_fileToUpload.Text))
                     throw new ArgumentException("Path to file can not be empty");
 
-                ServerController.SendFile(tb_fileToUpload.Text, this);
+                ushort selectedAlgorithm = (ushort)cb_algList.SelectedValue;
+
+                ServerController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, this);
             }
             catch (Exception ex)
             {

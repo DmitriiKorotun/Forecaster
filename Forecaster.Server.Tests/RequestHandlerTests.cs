@@ -33,8 +33,9 @@ namespace Forecaster.Server.Tests
         [TestMethod]
         public void RestoreFileTransfer_InitialRequest_SameRequestExpected()
         {
-            byte[] fileBytes = File.ReadAllBytes("fortests/XTSE-AAB.csv");
             // arrange
+            byte[] fileBytes = File.ReadAllBytes("fortests/XTSE-AAB.csv");
+            
             FileTransferRequest request = new FileTransferRequest(fileBytes);
 
             byte[] requestBytes = new RequestManager().CreateByteRequest<FileTransferRequest>(request);

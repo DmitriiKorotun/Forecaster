@@ -7,27 +7,27 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Forecasting.Prediction
 {
-    class MovingAverage
+    public class MovingAverage : IPredictionAlgorithm
     {
-        public List<BasicDataset> Predict(IEnumerable<BasicDataset> dataset, int daysToPredict)
-        {
-            var predcitedStockList = new List<BasicDataset>(daysToPredict);
+        //public List<BasicDataset> Predict(IEnumerable<BasicDataset> dataset)
+        //{
+        //    var predcitedStockList = new List<BasicDataset>(daysToPredict);
 
-            List<BasicDataset> average = dataset.ToList();
+        //    List<BasicDataset> average = dataset.ToList();
 
-            BasicDataset nextPredicted;
+        //    BasicDataset nextPredicted;
 
-            for (int i = 0; i < daysToPredict; ++i)
-            {
-                nextPredicted = GetSinglePrediction(average);
+        //    for (int i = 0; i < daysToPredict; ++i)
+        //    {
+        //        nextPredicted = GetSinglePrediction(average);
 
-                predcitedStockList.Add(nextPredicted);
+        //        predcitedStockList.Add(nextPredicted);
 
-                average = CreateAverage(average, nextPredicted);
-            }
+        //        average = CreateAverage(average, nextPredicted);
+        //    }
 
-            return predcitedStockList;
-        }
+        //    return predcitedStockList;
+        //}
 
         private BasicDataset GetSinglePrediction(IEnumerable<BasicDataset> average)
         {
@@ -47,21 +47,29 @@ namespace Forecaster.Forecasting.Prediction
             return predictedData;
         }
 
-        public List<BasicDataset> GetAllPrediction(IEnumerable<BasicDataset> average, int predictionCount)
+        public List<BasicDataset> Predict(IEnumerable<BasicDataset> average)
         {
-            List<BasicDataset> preds = new List<BasicDataset>();
+            SplitSet(average, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
 
-            BasicDataset predictedData;
+            int predictionCount = controlSet.Count();
+
+            List<BasicDataset> predictedSet = new List<BasicDataset>(predictionCount);
+
+            BasicDataset singlePrediction;
 
             decimal summ = 0;
 
             for (int i = 0; i < predictionCount; ++i)
             {
-                summ = average.Skip(average.Count() - predictionCount + i).Sum(x => x.Close) + preds.Sum(x => x.Close);
+                summ = average.Skip(average.Count() - predictionCount + i).Sum(x => x.Close) + predictedSet.Sum(x => x.Close);
 
-                DateTime predictedDate = preds.Count > 0 ? preds.ElementAt(preds.Count() - 1).Date.AddDays(1) : average.ElementAt(average.Count() - 1).Date.AddDays(1);
+                //DateTime predictedDate = predictedSet.Count > 0 ? 
+                //    predictedSet.ElementAt(predictedSet.Count() - 1).Date.AddDays(1) :
+                //    average.ElementAt(average.Count() - 1).Date.AddDays(1);
 
-                switch(predictedDate.Date.DayOfWeek)
+                DateTime predictedDate = controlSet.ElementAt(i).Date;
+
+                switch (predictedDate.Date.DayOfWeek)
                 {
                     case DayOfWeek.Saturday:
                         predictedDate = predictedDate.AddDays(2);
@@ -71,12 +79,23 @@ namespace Forecaster.Forecasting.Prediction
                         break;
                 }
 
-                predictedData = new BasicDataset(predictedDate, summ / predictionCount);
+                singlePrediction = new BasicDataset(predictedDate, summ / predictionCount);
 
-                preds.Add(predictedData);
+                predictedSet.Add(singlePrediction);
             }
 
-            return preds;
+            return predictedSet;
+        }
+
+        private void SplitSet(IEnumerable<BasicDataset> dataset, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet)
+        {
+            int datasetCount = dataset.Count(),
+                trainingSize = (int)Math.Ceiling(datasetCount * 0.8),
+                controlSize = datasetCount - trainingSize;
+
+            trainingSet = dataset.Take(trainingSize);
+
+            controlSet = dataset.Skip(trainingSize).Take(controlSize);
         }
 
         private List<BasicDataset> CreateAverage(IEnumerable<BasicDataset> oldAverage, BasicDataset nextPredicted)

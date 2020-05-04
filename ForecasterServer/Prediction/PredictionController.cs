@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Server.Prediction
 {
-    class PredictionController
+    public class PredictionController
     {
         public List<BasicDataset> Predict(List<StockDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
         {

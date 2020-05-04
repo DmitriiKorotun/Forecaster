@@ -1,41 +1,70 @@
-﻿using System;
+﻿using Forecaster.Net;
+using Forecaster.Net.Requests;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace Forecaster.Client.Network
 {
-    class ServerController
+    public static class ServerController
     {
-        public byte[] SendFile(string path)
+        public static byte[] SendFile(string path, ClientWindow window)
         {
-            byte[] fileBytes = ReadFile(path);
+            try
+            {
+                byte[] fileBytes = ReadFile(path),
+                    requestBytes = CreateFTRequestBytes(fileBytes);
 
-            AsynchronousClient client = new AsynchronousClient();
+                using (AsynchronousClient client = new AsynchronousClient())
+                {
+                    //client.ExceptionReport += (sender, e) =>
+                    //{
+                    //    window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
+                    //        MessageBox.Show(e.Exception.Message, Application.ProductName,
+                    //            MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    //};
 
-            client.Connect(Dns.GetHostName());
+                    client.Connect(Dns.GetHostName());
 
-            client.SendData(fileBytes);
+                    client.SendData(requestBytes);
 
-            var result = client.ReceiveResponse();
+                    var result = client.ReceiveResponse();
 
-            return result;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        //private Task<byte[]> Lolec(AsynchronousClient client)
-        //{
-        //    byte[] responseBytes;
+        public static void ParseResponse()
+        {
 
-        //    if(client.IsResponseReceived)
-        //    {
-        //        int size = client.sb
-        //    }
-        //}
+        }
 
-        private byte[] ReadFile(string path)
+        private static byte[] CreateFTRequestBytes(byte[] fileBytes)
+        {
+            FileTransferRequest request = new FileTransferRequest(fileBytes);
+
+            return GetFTRequestBytes(request);
+        }
+
+        private static byte[] GetFTRequestBytes(FileTransferRequest request)
+        {
+            RequestManager requestManager = new RequestManager();
+
+            return requestManager.CreateByteRequest(request);
+        }
+
+        private static byte[] ReadFile(string path)
         {
             byte[] fileBytes;
 

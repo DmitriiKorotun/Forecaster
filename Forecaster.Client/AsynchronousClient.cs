@@ -1,4 +1,5 @@
 ﻿using Forecaster.Client.Logging;
+using Forecaster.Client.Network;
 using Forecaster.Net;
 using Forecaster.Net.Requests;
 using System;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Client
 {
-    public class AsynchronousClient
+    public class AsynchronousClient : IDisposable
     {
         // The port number for the remote device.  
         private const int port = 11000;
@@ -28,7 +29,12 @@ namespace Forecaster.Client
 
         private Socket Client { get; set; }
 
-        public bool IsResponseReceived { get; set; }
+        public event EventHandler<ExceptionReportEventArgs> ExceptionReport;
+
+        private void OnExceptionReport(Exception exception)
+        {
+            ExceptionReport?.Invoke(this, new ExceptionReportEventArgs(exception));
+        }
 
         public void Connect(string hostName)
         {
@@ -45,8 +51,8 @@ namespace Forecaster.Client
                     SocketType.Stream, ProtocolType.Tcp);
 
                 // Connect to the remote endpoint.  
-                Client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), Client);
-
+                var kik = Client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), Client);
+                //Client.EndConnect(kik);
                 connectDone.WaitOne();
             }
             catch (Exception ex)
@@ -72,9 +78,13 @@ namespace Forecaster.Client
                 // Signal that the connection has been made.  
                 connectDone.Set();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
+            catch (Exception ex)
+            {              
+                Console.WriteLine(ex.ToString());
+
+                OnExceptionReport(ex);
+
+                connectDone.Set();
             }
         }
 
@@ -116,9 +126,11 @@ namespace Forecaster.Client
             }
             catch (Exception e)
             {
-                this.Disconnect();
+                Disconnect();
 
                 Console.WriteLine(e.ToString());
+
+                throw e;
             }
         }
 
@@ -133,14 +145,12 @@ namespace Forecaster.Client
             // Receive the response from the remote device.  
             Receive(Client, state);
 
-            if (receiveDone.WaitOne(5000))
+            if (receiveDone.WaitOne())
             {
                 responseBytes = state.receivedData.SelectMany(a => a).ToArray();
             }
             else
-                throw new TimeoutException("Server is not responding");
-
-            Disconnect();
+                throw new SocketException((int)SocketError.TimedOut);
 
             return responseBytes;
         }
@@ -201,6 +211,8 @@ namespace Forecaster.Client
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+
+                throw e;
             }
         }
 
@@ -221,7 +233,7 @@ namespace Forecaster.Client
 
         public void Dispose()
         {
-            this.Disconnect();
+            Disconnect();
         }
     }
 }

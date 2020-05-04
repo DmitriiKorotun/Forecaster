@@ -94,6 +94,9 @@ namespace Forecaster.Server
             // Read data from the client socket.
             int bytesRead = handler.EndReceive(ar);
 
+            if (state.totalBytesRead > 109000)
+                state.totalBytesRead += 0;
+
             if (bytesRead > 0)
             {
                 // There  might be more data, so store the data received so far.  

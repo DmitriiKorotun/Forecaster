@@ -37,7 +37,7 @@ namespace Forecaster.Server.Prediction
 
         private static List<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm)
         {
-            List<StockDataset> stockList = CreateStockList(csvData, csvData.Count - 1, 1);
+            List<StockDataset> stockList = CreateStockList(csvData, csvData.Count - 2, 1);
 
             return Predict(stockList, predictionAlgorithm);
         }

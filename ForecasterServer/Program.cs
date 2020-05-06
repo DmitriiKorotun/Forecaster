@@ -21,7 +21,7 @@ namespace Forecaster.Server
 
             //var data = PredictionController.Predict("fortests/NSE-TATAGLOBAL11.csv", new MovingAverage());
 
-            var test = new FileTransferRequest(File.ReadAllBytes("fortests/NSE-TATAGLOBAL11.csv"));
+            //var test = new FileTransferRequest(File.ReadAllBytes("fortests/NSE-TATAGLOBAL11.csv"));
 
             AsynchronousSocketListener.StartListening();
 

@@ -1,5 +1,6 @@
 ﻿using Forecaster.Net;
 using Forecaster.Net.Requests;
+using Forecaster.Net.Responses;
 using Forecaster.Server.Network;
 using Forecaster.Server.Prediction;
 using System;
@@ -118,14 +119,13 @@ namespace Forecaster.Server
                 {
                     // All the data has been read from the
                     // client. Display it on the console.
-                    byte[] data = state.receivedData.SelectMany(a => a).ToArray();
-
-                    Controller.GetResponse(data);
+                    byte[] data = state.receivedData.SelectMany(a => a).ToArray(),
+                        response = Controller.GetResponse(data);
 
                     Console.WriteLine("Read {0} bytes from socket.",
                         data.Length);
                     // Echo the data back to the client.  
-                    Send(handler, "Done");
+                    Send(handler, response);
                 }
                 else
                 {
@@ -136,17 +136,18 @@ namespace Forecaster.Server
             }
             else
             {
-                Send(handler, "Done");
+                Response clientErrorResponse = new Response((int)ResponseCode.Declinded);
+
+                byte[] responseBytes = ResponseManager.CreateByteResponse(clientErrorResponse);
+
+                Send(handler, responseBytes);
             }
         }
 
-        private static void Send(Socket handler, String data)
+        private static void Send(Socket handler, byte[] responseBytes)
         {
-            // Convert the string data to byte data using ASCII encoding.  
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
-
             // Begin sending the data to the remote device.  
-            handler.BeginSend(byteData, 0, byteData.Length, 0,
+            handler.BeginSend(responseBytes, 0, responseBytes.Length, 0,
                 new AsyncCallback(SendCallback), handler);
         }
 

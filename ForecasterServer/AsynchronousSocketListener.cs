@@ -1,6 +1,7 @@
 ﻿using Forecaster.Net;
 using Forecaster.Net.Requests;
 using Forecaster.Server.Network;
+using Forecaster.Server.Prediction;
 using System;
 using System.Collections.Generic;
 using System.Linq;

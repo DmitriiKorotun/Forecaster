@@ -15,7 +15,7 @@ namespace Forecaster.Server.Tests
         public void RestoreRequest_InitialRequest_SameRequestExpected()
         {
             // arrange
-            Request request = new HandshakeRequest(HandshakeRequest.RequestType.TransferFile);
+            Request request = new HandshakeRequest();
 
             byte[] requestBytes = new RequestManager().CreateByteRequest(request);
 

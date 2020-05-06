@@ -15,6 +15,7 @@ namespace Forecaster.Server.Network
         {
             int requestLength = ReadRequestLength(data);
 
+            // First 4 bytes allocated for received data size, so we shall skip it
             byte[] requestBytes = data.Skip(sizeof(int)).Take(requestLength).ToArray();
 
             T request = new RequestManager().RestoreFromBytes<T>(requestBytes);

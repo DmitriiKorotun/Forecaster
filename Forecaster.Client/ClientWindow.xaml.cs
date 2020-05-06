@@ -1,6 +1,8 @@
-﻿using Forecaster.Client.Network;
+﻿using Forecaster.Client.Drawing;
+using Forecaster.Client.Network;
 using Forecaster.Net;
 using Forecaster.Net.Requests;
+using LiveCharts;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -35,6 +37,9 @@ namespace Forecaster.Client
             LSTM = 128
         }
 
+        public Func<double, string> Formatter { get; set; }
+        public SeriesCollection Series { get; set; }
+
         public ClientWindow()
         {
             InitializeComponent();
@@ -50,6 +55,8 @@ namespace Forecaster.Client
             task.Start();
 
             InitAlgorithmsCB();
+
+            Formatter = FormatterManager.CreateFormatter();
         }
 
         private void InitAlgorithmsCB()
@@ -80,7 +87,7 @@ namespace Forecaster.Client
 
                 ushort selectedAlgorithm = (ushort)cb_algList.SelectedValue;
 
-                ServerController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, this);
+                ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, this);
             }
             catch (Exception ex)
             {

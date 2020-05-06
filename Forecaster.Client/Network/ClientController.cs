@@ -1,5 +1,6 @@
 ﻿using Forecaster.Net;
 using Forecaster.Net.Requests;
+using Forecaster.Net.Responses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ using System.Windows.Threading;
 
 namespace Forecaster.Client.Network
 {
-    public static class ServerController
+    public static class ClientController
     {
         public static byte[] SendFile(string path, ushort selectedAlgortihm, ClientWindow window)
         {
@@ -45,10 +46,25 @@ namespace Forecaster.Client.Network
             }
         }
 
-        public static void ParseResponse()
+        public static PredictionResponse ParseResponse(byte[] responseBytes)
         {
+            Response basicResponse = ResponseHandler.RestoreResponse<Response>(responseBytes);
 
+            PredictionResponse response;
+
+            if (basicResponse.ResponseCode == (int)ResponseCode.OK)
+                response = ResponseHandler.RestoreResponse<PredictionResponse>(responseBytes);
+            else
+                throw new Exception("Server sent a response with " + basicResponse.ResponseCode.ToString() + " error code");
+
+            return response;
         }
+
+        public static void HandleResponse(byte[] responseBytes)
+        {
+            PredictionResponse response = ParseResponse(responseBytes);
+        }
+
 
         private static byte[] CreateFTRequestBytes(byte[] fileBytes, ushort selectedAlgorithm)
         {
@@ -74,7 +90,7 @@ namespace Forecaster.Client.Network
                 {
                     fileBytes = File.ReadAllBytes(path);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw ex;
                 }

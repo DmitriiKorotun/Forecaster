@@ -148,6 +148,8 @@ namespace Forecaster.Client
             if (receiveDone.WaitOne())
             {
                 responseBytes = state.receivedData.SelectMany(a => a).ToArray();
+
+                ClientController.HandleResponse(responseBytes);
             }
             else
                 throw new SocketException((int)SocketError.TimedOut);

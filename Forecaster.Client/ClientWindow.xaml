@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Forecaster.Client"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         Title="Forecaster Client" Height="450" Width="800">
     <Grid>
@@ -19,6 +20,15 @@
         <Menu Grid.ColumnSpan="2">
             <MenuItem Header="File"/>
         </Menu>
+
+        <Grid Grid.Column="1" Grid.Row="1" Margin="10">
+            <lvc:CartesianChart Series="{Binding Series}">
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
+                </lvc:CartesianChart.AxisX>
+            </lvc:CartesianChart>
+        </Grid>
+
         <Grid HorizontalAlignment="Left" Width="100"/>
 
         <Grid Grid.Column="1" Grid.Row="2">

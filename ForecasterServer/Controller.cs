@@ -1,5 +1,7 @@
-﻿using Forecaster.Forecasting.Prediction;
+﻿using Forecaster.Forecasting.Entities;
+using Forecaster.Forecasting.Prediction;
 using Forecaster.Net.Requests;
+using Forecaster.Server.Network;
 using Forecaster.Server.Prediction;
 using Forecaster.Server.TempIO;
 using System;
@@ -10,18 +12,25 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Server
 {
-    class Controller
+    public static class Controller
     {
-        Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } = new Dictionary<ushort, IPredictionAlgorithm>() { {1, new MovingAverage()} };
+        static Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } = new Dictionary<ushort, IPredictionAlgorithm>() { {1, new MovingAverage()} };
 
-        public void GetPrediction(FileTransferRequest request)
+        public static void GetResponse(byte[] receivedData)
+        {
+            FileTransferRequest request = RequestHandler.RestoreRequest<FileTransferRequest>(receivedData);
+
+            GetPrediction(request);
+        }
+
+        private static List<BasicDataset> GetPrediction(FileTransferRequest request)
         {
             IPredictionAlgorithm algorithm = ChosePredictionAlgorithm(request.SelectedAlgortihms);
 
-            PredictionController.Predict(request.FileBytes, algorithm);
+            return PredictionController.Predict(request.FileBytes, algorithm);
         }
 
-        private IPredictionAlgorithm ChosePredictionAlgorithm(ushort algorithmValue)
+        private static IPredictionAlgorithm ChosePredictionAlgorithm(ushort algorithmValue)
         {
             IPredictionAlgorithm algorithm;
 

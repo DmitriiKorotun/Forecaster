@@ -24,7 +24,7 @@ namespace Forecaster.Server
             Controller ls = new Controller();
             var kek = new FileTransferRequest(File.ReadAllBytes("fortests/NSE-TATAGLOBAL11.csv"));
 
-            ls.lol(kek);
+            //ls.lol(kek);
 
             AsynchronousSocketListener.StartListening();
 

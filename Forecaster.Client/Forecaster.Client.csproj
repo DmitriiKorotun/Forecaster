@@ -64,9 +64,12 @@
     </ApplicationDefinition>
     <Compile Include="AsynchronousClient.cs" />
     <Compile Include="ClientModelController.cs" />
+    <Compile Include="CSV\CsvConverter.cs" />
     <Compile Include="Drawing\DateModel.cs" />
     <Compile Include="Drawing\DiagrammBuilder.cs" />
     <Compile Include="Drawing\FormatterManager.cs" />
+    <Compile Include="Local\Reader.cs" />
+    <Compile Include="Local\Writer.cs" />
     <Compile Include="Logging\RamLogger.cs" />
     <Compile Include="Network\ExceptionReportEventArgs.cs" />
     <Compile Include="Network\ClientController.cs" />

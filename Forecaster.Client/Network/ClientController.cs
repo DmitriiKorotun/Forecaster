@@ -46,6 +46,31 @@ namespace Forecaster.Client.Network
             }
         }
 
+        public static byte[] SendFile(string path, ushort selectedAlgortihm, AsynchronousClient client)
+        {
+            try
+            {
+                byte[] fileBytes = ReadFile(path),
+                    requestBytes = CreateFTRequestBytes(fileBytes, selectedAlgortihm);
+
+                using (client)
+                {
+                    client.Connect(Dns.GetHostName());
+
+                    client.SendData(requestBytes);
+
+                    var result = client.ReceiveResponse();
+
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static PredictionResponse ParseResponse(byte[] responseBytes)
         {
             Response basicResponse = ResponseHandler.RestoreResponse<Response>(responseBytes);

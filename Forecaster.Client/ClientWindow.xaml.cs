@@ -44,9 +44,13 @@ namespace Forecaster.Client
         public Func<double, string> Formatter { get; set; }
         public SeriesCollection Series { get; set; }
 
+        public AsynchronousClient Client { get; set; }
+
         public ClientWindow()
         {
             InitializeComponent();
+
+            InitializeClient();
 
             Task task = new Task(() =>
             {
@@ -61,6 +65,18 @@ namespace Forecaster.Client
             InitAlgorithmsCB();
 
             Formatter = FormatterManager.CreateFormatter();
+        }
+
+        private void InitializeClient()
+        {
+            Client = new AsynchronousClient();
+
+            Client.Transfer += ClientController.HandleResponse;
+        }
+
+        private void ReceiveResponse(byte[] data)
+        {
+            InitAlgorithmsCB();
         }
 
         private void InitAlgorithmsCB()
@@ -91,7 +107,7 @@ namespace Forecaster.Client
 
                 ushort selectedAlgorithm = (ushort)cb_algList.SelectedValue;
 
-                ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, this);
+                ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, Client);
             }
             catch (Exception ex)
             {

@@ -31,6 +31,9 @@ namespace Forecaster.Client
 
         public event EventHandler<ExceptionReportEventArgs> ExceptionReport;
 
+        public delegate void ResponseHandler(byte[] data);
+        public event ResponseHandler Transfer;
+
         private void OnExceptionReport(Exception exception)
         {
             ExceptionReport?.Invoke(this, new ExceptionReportEventArgs(exception));
@@ -136,6 +139,8 @@ namespace Forecaster.Client
 
         public byte[] ReceiveResponse()
         {
+            receiveDone.Reset();
+
             byte[] responseBytes;
 
             // Create the state object.  
@@ -149,7 +154,9 @@ namespace Forecaster.Client
             {
                 responseBytes = state.receivedData.SelectMany(a => a).ToArray();
 
-                ClientController.HandleResponse(responseBytes);
+                Transfer?.Invoke(responseBytes);
+
+                //ClientController.HandleResponse(responseBytes);
             }
             else
                 throw new SocketException((int)SocketError.TimedOut);

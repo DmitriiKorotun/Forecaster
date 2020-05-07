@@ -1,8 +1,12 @@
-﻿using Forecaster.Client.Drawing;
+﻿using Forecaster.Client.CSV;
+using Forecaster.Client.Drawing;
+using Forecaster.Client.Local;
 using Forecaster.Client.Network;
 using Forecaster.Net;
 using Forecaster.Net.Requests;
 using LiveCharts;
+using LiveCharts.Configurations;
+using LiveCharts.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -107,6 +111,38 @@ namespace Forecaster.Client
 
             //client.SendData(requestBytes);
 
+        }
+
+        private void btn_fillDiagramm_Click(object sender, RoutedEventArgs e)
+        {
+            List<string[]> csvContent = Reader.ReadCSV(tb_fileToUpload.Text);
+
+            Dictionary<DateTime, double> csvDictionary = CsvConverter.ConvertToDictionary(csvContent);
+
+            CartesianMapper<DateModel> dayConfig = Mappers.Xy<DateModel>().X(dateModel => dateModel.Date.Ticks / TimeSpan.FromDays(1).Ticks).Y(dateModel => dateModel.Value);
+
+            if(Series == null)
+                Series = new DiagrammBuilder().InitSeriesCollection(dayConfig, csvDictionary);
+            else
+                SetSeriesLine(csvDictionary);
+
+            SetDataContext();
+        }
+
+        private void SetSeriesLine(params Dictionary<DateTime, double>[] csvStockList)
+        {
+            Series.Clear();
+
+            IEnumerable<LineSeries> newLineSeriesRange = new DiagrammBuilder().CreateLineSeriesRange(csvStockList);
+
+            foreach (LineSeries newLineSeries in newLineSeriesRange)
+                Series.Add(newLineSeries);
+        }
+
+        private void SetDataContext()
+        {
+            if (DataContext == null)
+                DataContext = this;
         }
     }
 }

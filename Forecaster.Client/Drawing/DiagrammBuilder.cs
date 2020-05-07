@@ -13,7 +13,7 @@ namespace Forecaster.Client.Drawing
 {
     class DiagrammBuilder
     {
-        public SeriesCollection GetSeriesCollection(CartesianMapper<DateModel> mapper, params Dictionary<DateTime, double>[] dataSeries)
+        public SeriesCollection InitSeriesCollection(CartesianMapper<DateModel> mapper, params Dictionary<DateTime, double>[] dataSeries)
         {
             SeriesCollection seriesCollection = new SeriesCollection(mapper);
 
@@ -25,6 +25,20 @@ namespace Forecaster.Client.Drawing
             }
 
             return seriesCollection;
+        }
+
+        public IEnumerable<LineSeries> CreateLineSeriesRange(params Dictionary<DateTime, double>[] dataSeries)
+        {
+            List<LineSeries> lineSeriesList = new List<LineSeries>(dataSeries.Length);
+
+            foreach (Dictionary<DateTime, double> diagrammData in dataSeries)
+            {
+                LineSeries lineSeries = CreateLineSeries(diagrammData);
+
+                lineSeriesList.Add(lineSeries);
+            }
+
+            return lineSeriesList;
         }
 
         private LineSeries CreateLineSeries(Dictionary<DateTime, double> diagrammData)

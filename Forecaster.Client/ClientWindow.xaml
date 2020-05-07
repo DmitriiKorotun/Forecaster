@@ -57,6 +57,7 @@
             <Button Margin="5, 0" Content="Upload" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
             <ComboBox Name="cb_algList" Margin="5, 0" Grid.Row="2" VerticalAlignment="Top" Grid.ColumnSpan="2"
                       SelectedValuePath="Key" DisplayMemberPath="Value"/>
+            <Button Name="btn_fillDiagramm" Margin="5, 5" Content="Fill diagramm" Grid.Row="1" VerticalAlignment="Bottom" Click="btn_fillDiagramm_Click"/>
         </Grid>
 
     </Grid>

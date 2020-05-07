@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Server", "Foreca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Net", "..\TestFCClient\Forecaster.Net\Forecaster.Net.csproj", "{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Client", "Forecaster.Client\Forecaster.Client.csproj", "{A24813DE-10C7-40A0-9C96-79634449DD16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Server.Tests", "Forecaster.Server.Tests\Forecaster.Server.Tests.csproj", "{3EF07A8D-4EFF-479D-8AB8-4FA1B09F84AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Tests", "Forecaster.Tests\Forecaster.Tests.csproj", "{A6982939-F2C6-4F4E-A788-25D3FC7A4021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,18 @@ Global
 		{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A24813DE-10C7-40A0-9C96-79634449DD16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A24813DE-10C7-40A0-9C96-79634449DD16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A24813DE-10C7-40A0-9C96-79634449DD16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A24813DE-10C7-40A0-9C96-79634449DD16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EF07A8D-4EFF-479D-8AB8-4FA1B09F84AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EF07A8D-4EFF-479D-8AB8-4FA1B09F84AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EF07A8D-4EFF-479D-8AB8-4FA1B09F84AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EF07A8D-4EFF-479D-8AB8-4FA1B09F84AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

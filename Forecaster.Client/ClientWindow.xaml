@@ -1,0 +1,64 @@
+﻿<Window x:Class="Forecaster.Client.ClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Forecaster.Client"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        mc:Ignorable="d"
+        Title="Forecaster Client" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"></RowDefinition>
+            <RowDefinition Height="70*"></RowDefinition>
+            <RowDefinition Height="20*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="8*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.ColumnSpan="2">
+            <MenuItem Header="File"/>
+        </Menu>
+
+        <Grid Grid.Column="1" Grid.Row="1" Margin="10">
+            <lvc:CartesianChart Series="{Binding Series}">
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
+                </lvc:CartesianChart.AxisX>
+            </lvc:CartesianChart>
+        </Grid>
+
+        <Grid HorizontalAlignment="Left" Width="100"/>
+
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="80*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Padding="5, 0, 0, 0" TextWrapping="Wrap" Text="Output"/>
+            <ScrollViewer Grid.Row="1">
+                <TextBlock Name="tbl_output" Grid.Row="1" Margin="5" TextWrapping="Wrap" Background="#FFF3F3F3"/>
+            </ScrollViewer>
+
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="60*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"></ColumnDefinition>
+                <ColumnDefinition Width="5*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv" Name="tb_fileToUpload" Height="23" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True"/>
+            <Button Margin="5, 0" Content="Chose file" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Click="Button_Click"/>
+            <Button Margin="5, 0" Content="Upload" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
+            <ComboBox Name="cb_algList" Margin="5, 0" Grid.Row="2" VerticalAlignment="Top" Grid.ColumnSpan="2"
+                      SelectedValuePath="Key" DisplayMemberPath="Value"/>
+            <Button Name="btn_fillDiagramm" Margin="5, 5" Content="Fill diagramm" Grid.Row="1" VerticalAlignment="Bottom" Click="btn_fillDiagramm_Click"/>
+        </Grid>
+
+    </Grid>
+</Window>

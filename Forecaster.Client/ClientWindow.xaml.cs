@@ -44,9 +44,14 @@ namespace Forecaster.Client
         public Func<double, string> Formatter { get; set; }
         public SeriesCollection Series { get; set; }
 
+        private AsynchronousClient Client { get; set; }
+        public Painter DiagrammPainter { get; set; }
+
         public ClientWindow()
         {
             InitializeComponent();
+
+            InitializeClient();
 
             Task task = new Task(() =>
             {
@@ -61,6 +66,33 @@ namespace Forecaster.Client
             InitAlgorithmsCB();
 
             Formatter = FormatterManager.CreateFormatter();
+
+            DiagrammPainter = new Painter();
+
+            DataContext = this;
+
+            ClientController.TransferPredictions += Test;
+        }
+
+        private void InitializeClient()
+        {
+            Client = new AsynchronousClient();
+
+            Client.Transfer += ClientController.HandleResponse;
+        }
+
+        private void ReceiveResponse(byte[] data)
+        {
+            InitAlgorithmsCB();
+        }
+
+        private void Test(Dictionary<string, string> restoredPredictions)
+        {
+            var predictionsToDraw = ResponseConverter.ConvertResponsePredictions(restoredPredictions);
+
+            var lineToDraw = new DiagrammBuilder().CreateLineSeriesRange(predictionsToDraw);
+
+            DiagrammPainter.AddLine(lineToDraw.ElementAt(0));
         }
 
         private void InitAlgorithmsCB()
@@ -91,7 +123,7 @@ namespace Forecaster.Client
 
                 ushort selectedAlgorithm = (ushort)cb_algList.SelectedValue;
 
-                ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, this);
+                ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, Client);
             }
             catch (Exception ex)
             {
@@ -119,14 +151,9 @@ namespace Forecaster.Client
 
             Dictionary<DateTime, double> csvDictionary = CsvConverter.ConvertToDictionary(csvContent);
 
-            CartesianMapper<DateModel> dayConfig = Mappers.Xy<DateModel>().X(dateModel => dateModel.Date.Ticks / TimeSpan.FromDays(1).Ticks).Y(dateModel => dateModel.Value);
+            DiagrammPainter.UpdateSeries(csvDictionary);
 
-            if(Series == null)
-                Series = new DiagrammBuilder().InitSeriesCollection(dayConfig, csvDictionary);
-            else
-                SetSeriesLine(csvDictionary);
-
-            SetDataContext();
+            //SetDataContext();
         }
 
         private void SetSeriesLine(params Dictionary<DateTime, double>[] csvStockList)

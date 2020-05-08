@@ -15,6 +15,9 @@ namespace Forecaster.Client.Network
 {
     public static class ClientController
     {
+        public delegate void PredictionHandler(Dictionary<string, string> restoredPredictions);
+        public static event PredictionHandler TransferPredictions;
+
         public static byte[] SendFile(string path, ushort selectedAlgortihm, ClientWindow window)
         {
             try
@@ -88,6 +91,8 @@ namespace Forecaster.Client.Network
         public static void HandleResponse(byte[] responseBytes)
         {
             PredictionResponse response = ParseResponse(responseBytes);
+
+            TransferPredictions?.Invoke(response.Predictions);
         }
 
 

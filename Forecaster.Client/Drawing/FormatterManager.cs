@@ -11,11 +11,18 @@ namespace Forecaster.Client.Drawing
     {
         public static Func<double, string> CreateFormatter()
         {
-            var dayConfig = Mappers.Xy<DateModel>().X(dateModel => dateModel.Date.Ticks / TimeSpan.FromDays(1).Ticks).Y(dateModel => dateModel.Value);
-
-            Func<double, string> formatter = value => new DateTime((long)(value * TimeSpan.FromDays(1).Ticks)).ToString("y");
+            string formatter(double value) => value < 0.0 ? new DateTime((long)0.0).ToString("y") : new DateTime(
+                (long)(value * TimeSpan.FromDays(1).Ticks)).ToString("y");
 
             return formatter;
+        }
+
+        private static string Test(double value)
+        {
+            if (value >= 0)
+                return new DateTime((long)(value * TimeSpan.FromDays(1).Ticks)).ToString("y");
+            else
+                throw new Exception();
         }
     }
 }

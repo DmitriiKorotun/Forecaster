@@ -2,6 +2,7 @@
 using Forecaster.Server.Csv;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,39 +47,53 @@ namespace Forecaster.Server.TempIO
 
         private IEnumerable<StockDataset> CreateDatasetRange(IEnumerable<string[]> csvContent, Dictionary<string, int> headersPosition)
         {
-            List<StockDataset> datasets = new List<StockDataset>(csvContent.Count());
-
-            foreach (string[] csvLine in csvContent)
+            try
             {
-                StockDataset dataset = CreateDataset(csvLine, headersPosition);
+                List<StockDataset> datasets = new List<StockDataset>(csvContent.Count());
 
-                if (dataset != null)
-                    datasets.Add(dataset);
+                foreach (string[] csvLine in csvContent)
+                {
+                    StockDataset dataset = CreateDataset(csvLine, headersPosition);
+
+                    if (dataset != null)
+                        datasets.Add(dataset);
+                }
+
+                return datasets;
             }
-
-            return datasets;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private StockDataset CreateDataset(string[] csvLine, Dictionary<string, int> headersPosition)
         {
             try
             {
-                StockDataset dataset = new StockDataset();
-
-                dataset.Close = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Close"]);
-                dataset.Last = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Last"]);
-                dataset.Low = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Low"]);
-                dataset.Open = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Open"]);
-                dataset.High = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["High"]);
-                dataset.TotalTradeQuantity = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["TotalTradeQuantity"]);
-                dataset.Turnover = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Turnover"]);
-                dataset.Date = GetCsvDate(csvLine, headersPosition, datasetHeaders["Date"]);
+                StockDataset dataset = new StockDataset
+                {
+                    Close = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Close"]),
+                    Last = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Last"]),
+                    Low = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Low"]),
+                    Open = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Open"]),
+                    High = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["High"]),
+                    TotalTradeQuantity = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["TotalTradeQuantity"]),
+                    Turnover = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Turnover"]),
+                    Date = GetCsvDate(csvLine, headersPosition, datasetHeaders["Date"])
+                };
 
                 return dataset;
             }
+            catch(IndexOutOfRangeException ex)
+            {
+                Console.WriteLine("CreateDataset Exception: " + ex.Message);
+
+                return null;
+            }
             catch (FormatException ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("CreateDataset Exception: " + ex.Message);
 
                 return null;
             }
@@ -88,7 +103,22 @@ namespace Forecaster.Server.TempIO
         {
             int headerPosition = headersPosition[header];
 
-            decimal value = decimal.Parse(csvLine[headerPosition]);
+            decimal value;
+            //try
+            //{
+                value = decimal.Parse(csvLine[headerPosition], CultureInfo.InvariantCulture);
+            //}
+            //catch(Exception ex)
+            //{
+            //    try
+            //    {
+            //        value = decimal.Parse(csvLine[headerPosition], CultureInfo.InvariantCulture);
+            //    }
+            //    catch
+            //    {
+            //        throw ex;
+            //    }
+            //}
 
             return value;
         }

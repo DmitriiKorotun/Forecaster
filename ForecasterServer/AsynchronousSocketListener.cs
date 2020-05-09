@@ -86,18 +86,28 @@ namespace Forecaster.Server
 
         public static void ReadCallback(IAsyncResult ar)
         {
-            String content = String.Empty;
+            string content = string.Empty;
 
             // Retrieve the state object and the handler socket  
             // from the asynchronous state object.  
             StateObject state = (StateObject)ar.AsyncState;
             Socket handler = state.workSocket;
 
-            // Read data from the client socket.
-            int bytesRead = handler.EndReceive(ar);
+            int bytesRead;
 
-            if (state.totalBytesRead > 109000)
-                state.totalBytesRead += 0;
+            try
+            {
+                // Read data from the client socket.
+                bytesRead = handler.EndReceive(ar);
+            }
+            catch(SocketException ex)
+            {
+                Console.WriteLine(ex.Message + " Error code: " + ex.ErrorCode);
+
+                ShutdownSocket(handler);
+
+                return;
+            }
 
             if (bytesRead > 0)
             {
@@ -111,21 +121,56 @@ namespace Forecaster.Server
                 // more data.
 
                 if (state.totalBytesExpected == 0)
-                    state.totalBytesExpected = RequestHandler.ReadRequestLength(state.buffer) + sizeof(int);
+                {
+                    try
+                    {
+                        state.totalBytesExpected = RequestHandler.ReadRequestLength(state.buffer) + sizeof(int);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is OverflowException || ex is ArgumentOutOfRangeException)
+                        {
+                            Console.WriteLine(ex.Message);
+
+                            Response clientErrorResponse = new Response((int)ResponseCode.Declinded);
+
+                            byte[] responseBytes = ResponseManager.CreateByteResponse(clientErrorResponse);
+
+                            Send(handler, responseBytes);
+
+                            return;
+                        }
+
+                        throw;
+                    }
+                }
 
                 state.totalBytesRead += bytesRead;
 
                 if (state.totalBytesRead >= state.totalBytesExpected)
                 {
-                    // All the data has been read from the
-                    // client. Display it on the console.
-                    byte[] data = state.receivedData.SelectMany(a => a).ToArray(),
-                        response = Controller.GetResponse(data);
+                    try
+                    {
+                        // All the data has been read from the
+                        // client. Display it on the console.
+                        byte[] data = state.receivedData.SelectMany(a => a).ToArray(),
+                            response = Controller.GetResponse(data);
 
-                    Console.WriteLine("Read {0} bytes from socket.",
-                        data.Length);
-                    // Echo the data back to the client.  
-                    Send(handler, response);
+                        Console.WriteLine("Read {0} bytes from socket.", data.Length);
+
+                        // Echo the data back to the client.  
+                        Send(handler, response);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+
+                        Response serverErrorResponse = new Response((int)ResponseCode.Error);
+
+                        byte[] responseBytes = ResponseManager.CreateByteResponse(serverErrorResponse);
+
+                        Send(handler, responseBytes);
+                    }
                 }
                 else
                 {
@@ -162,14 +207,18 @@ namespace Forecaster.Server
                 int bytesSent = handler.EndSend(ar);
                 Console.WriteLine("Sent {0} bytes to client.", bytesSent);
 
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
-
+                ShutdownSocket(handler);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        private static void ShutdownSocket(Socket handler)
+        {
+            handler.Shutdown(SocketShutdown.Both);
+            handler.Close();
         }
     }
 }

@@ -94,7 +94,7 @@ namespace Forecaster.Client
         public void SendData(byte[] data)
         {
             try
-            {
+            {               
                 Send(Client, data);
 
                 sendDone.WaitOne();

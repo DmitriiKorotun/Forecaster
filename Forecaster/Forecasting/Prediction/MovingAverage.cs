@@ -61,7 +61,7 @@ namespace Forecaster.Forecasting.Prediction
 
             for (int i = 0; i < predictionCount; ++i)
             {
-                summ = average.Skip(average.Count() - predictionCount + i).Sum(x => x.Close) + predictedSet.Sum(x => x.Close);
+                summ = trainingSet.Skip(trainingSet.Count() - predictionCount + i).Sum(x => x.Close) + predictedSet.Sum(x => x.Close);
 
                 //DateTime predictedDate = predictedSet.Count > 0 ? 
                 //    predictedSet.ElementAt(predictedSet.Count() - 1).Date.AddDays(1) :

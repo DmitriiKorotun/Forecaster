@@ -1,6 +1,7 @@
 ﻿using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Net;
+using Forecaster.Server.Csv;
 using Forecaster.Server.TempIO;
 using Forecaster.TempIO;
 using System;
@@ -37,7 +38,9 @@ namespace Forecaster.Server.Prediction
 
         private static List<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm)
         {
-            List<StockDataset> stockList = CreateStockList(csvData, csvData.Count - 2, 1);
+            DatasetCreator datasetCreator = new DatasetCreator();
+
+            List<StockDataset> stockList = datasetCreator.CreateFromCsv(csvData).ToList();
 
             return Predict(stockList, predictionAlgorithm);
         }

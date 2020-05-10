@@ -27,9 +27,14 @@ namespace Forecaster.Client
         private static ManualResetEvent receiveDone =
             new ManualResetEvent(false);
 
+        private Exception LastRaisedException { get; set; }
+
         private Socket Client { get; set; }
 
         public event EventHandler<ExceptionReportEventArgs> ExceptionReport;
+
+        public delegate void ResponseHandler(byte[] data);
+        public event ResponseHandler Transfer;
 
         private void OnExceptionReport(Exception exception)
         {
@@ -51,9 +56,12 @@ namespace Forecaster.Client
                     SocketType.Stream, ProtocolType.Tcp);
 
                 // Connect to the remote endpoint.  
-                var kik = Client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), Client);
+                Client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), Client);
                 //Client.EndConnect(kik);
                 connectDone.WaitOne();
+
+                if (LastRaisedException != null)
+                    throw LastRaisedException;
             }
             catch (Exception ex)
             {
@@ -82,7 +90,7 @@ namespace Forecaster.Client
             {              
                 Console.WriteLine(ex.ToString());
 
-                OnExceptionReport(ex);
+                LastRaisedException = ex;
 
                 connectDone.Set();
             }
@@ -91,10 +99,13 @@ namespace Forecaster.Client
         public void SendData(byte[] data)
         {
             try
-            {
+            {               
                 Send(Client, data);
 
                 sendDone.WaitOne();
+
+                if (LastRaisedException != null)
+                    throw LastRaisedException;
             }
             catch (Exception ex)
             {
@@ -126,16 +137,18 @@ namespace Forecaster.Client
             }
             catch (Exception e)
             {
+                LastRaisedException = e;
+
                 Disconnect();
-
+              
                 Console.WriteLine(e.ToString());
-
-                throw e;
             }
         }
 
         public byte[] ReceiveResponse()
         {
+            receiveDone.Reset();
+
             byte[] responseBytes;
 
             // Create the state object.  
@@ -147,9 +160,14 @@ namespace Forecaster.Client
 
             if (receiveDone.WaitOne())
             {
+                if (LastRaisedException != null)
+                    throw LastRaisedException;
+
                 responseBytes = state.receivedData.SelectMany(a => a).ToArray();
 
-                ClientController.HandleResponse(responseBytes);
+                Transfer?.Invoke(responseBytes);
+
+                //ClientController.HandleResponse(responseBytes);
             }
             else
                 throw new SocketException((int)SocketError.TimedOut);
@@ -210,11 +228,16 @@ namespace Forecaster.Client
                     receiveDone.Set();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(ex.ToString());
 
-                throw e;
+                LastRaisedException = ex;
+
+                receiveDone.Set();
+                //HandleAsyncException?.Invoke(ex);
+
+                //OnExceptionReport(ex);
             }
         }
 
@@ -229,6 +252,9 @@ namespace Forecaster.Client
             }
             catch (Exception ex)
             {
+                if (ex is ObjectDisposedException)
+                    return;
+
                 throw ex;
             }
         }

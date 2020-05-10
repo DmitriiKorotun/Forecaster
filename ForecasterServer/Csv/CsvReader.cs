@@ -1,0 +1,74 @@
+﻿using Forecaster.Forecasting.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Forecaster.Server.Csv
+{
+    public static class CsvReader
+    {
+        public static Dictionary<string, int> GetHeadersPosition(string[] csvHeaders, string[] headersToSearch)
+        {
+            Dictionary<string, int> headersPosition = new Dictionary<string, int>(headersToSearch.Length);
+
+            int position = 0;
+
+            foreach(string header in csvHeaders)
+            {
+                foreach(string headerToSearch in headersToSearch)
+                {
+                    if (header == headerToSearch)
+                    {
+                        AddHeader(headersPosition, header, position);
+
+                        break;
+                    }
+                }
+                //switch (header)
+                //{
+                //    case "Date":
+                //    case "Open":
+                //    case "High":
+                //    case "Low":
+                //    case "Last":
+                //    case "Close":
+                //    case "Total Trade Quantity":
+                //    case "Turnover (Lacs)":
+                //        AddHeader(headersPosition, header, position);
+                //        break;
+                //}
+
+                ++position;
+            }
+
+            if (headersPosition.Count < headersToSearch.Length)
+                throw new Exception("Missing header(s)");
+
+            return headersPosition;
+        }
+
+        private static void AddHeader(Dictionary<string, int> headersPosition, string header, int position)
+        {
+            if(!headersPosition.ContainsKey(header))
+                headersPosition.Add(header, position);
+        }
+
+        public static IEnumerable<string[]> Convert(byte[] csvBytes)
+        {
+            List<string[]> converted = new List<string[]>();
+
+            string[] lines = Encoding.UTF8.GetString(csvBytes).Split('\n');
+
+            foreach (string line in lines)
+            {
+                string[] values = line.Split(',');
+
+                converted.Add(values);
+            }
+
+            return converted;
+        }
+    }
+}

@@ -23,16 +23,16 @@ namespace Forecaster.Server.Network
             return request;
         }
 
-        public static void ReceiveFile()
-        {
-
-        }
-
         public static int ReadRequestLength(byte[] data)
         {
             byte[] sizeBytes = data.Take(4).ToArray();
 
-            return ByteConverter.ReadIntFromBytes(sizeBytes);
+            int requestLength = checked(ByteConverter.ReadIntFromBytes(sizeBytes));
+
+            if (requestLength < 0)
+                throw new ArgumentOutOfRangeException("Request length can't be less than 0");
+
+            return requestLength;
         }
     }
 }

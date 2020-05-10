@@ -15,6 +15,9 @@ namespace Forecaster.Client.Network
 {
     public static class ClientController
     {
+        public delegate void PredictionHandler(Dictionary<string, string> restoredPredictions);
+        public static event PredictionHandler TransferPredictions;
+
         public static byte[] SendFile(string path, ushort selectedAlgortihm, ClientWindow window)
         {
             try
@@ -24,12 +27,14 @@ namespace Forecaster.Client.Network
 
                 using (AsynchronousClient client = new AsynchronousClient())
                 {
-                    //client.ExceptionReport += (sender, e) =>
-                    //{
-                    //    window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
-                    //        MessageBox.Show(e.Exception.Message, Application.ProductName,
-                    //            MessageBoxButtons.OK, MessageBoxIcon.Error)));
-                    //};
+                    client.ExceptionReport += (sender, e) =>
+                    {
+                        if (e.Exception.Message == "lol")
+                            return;
+                        //window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
+                        //    MessageBox.Show(e.Exception.Message, Application.ProductName,
+                        //        MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    };
 
                     client.Connect(Dns.GetHostName());
 
@@ -39,6 +44,39 @@ namespace Forecaster.Client.Network
 
                     return result;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static byte[] SendFile(string path, ushort selectedAlgortihm, AsynchronousClient client)
+        {
+            try
+            {
+                byte[] fileBytes = ReadFile(path),
+                    requestBytes = CreateFTRequestBytes(fileBytes, selectedAlgortihm);
+
+                using (client)
+                {
+                    client.ExceptionReport += (sender, e) =>
+                    {
+                        client.Dispose();
+                        //window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
+                        //    MessageBox.Show(e.Exception.Message, Application.ProductName,
+                        //        MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    };
+
+                    client.Connect(Dns.GetHostName());
+
+                    client.SendData(requestBytes);
+
+                    var result = client.ReceiveResponse();
+
+                    return result;
+                }
+
             }
             catch (Exception ex)
             {
@@ -63,6 +101,8 @@ namespace Forecaster.Client.Network
         public static void HandleResponse(byte[] responseBytes)
         {
             PredictionResponse response = ParseResponse(responseBytes);
+
+            TransferPredictions?.Invoke(response.Predictions);
         }
 
 

@@ -68,9 +68,12 @@
     <Compile Include="Drawing\DateModel.cs" />
     <Compile Include="Drawing\DiagrammBuilder.cs" />
     <Compile Include="Drawing\FormatterManager.cs" />
+    <Compile Include="Drawing\Painter.cs" />
+    <Compile Include="Drawing\ResponseConverter.cs" />
     <Compile Include="Local\Reader.cs" />
     <Compile Include="Local\Writer.cs" />
     <Compile Include="Logging\RamLogger.cs" />
+    <Compile Include="Network\ClientExceptionHandler.cs" />
     <Compile Include="Network\ExceptionReportEventArgs.cs" />
     <Compile Include="Network\ClientController.cs" />
     <Compile Include="StateObject.cs" />

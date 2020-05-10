@@ -97,6 +97,9 @@ namespace Forecaster.Server
 
             try
             {
+                ShutdownSocket(handler);
+
+                return;
                 // Read data from the client socket.
                 bytesRead = handler.EndReceive(ar);
             }

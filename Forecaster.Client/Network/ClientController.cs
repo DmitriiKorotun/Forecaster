@@ -27,12 +27,14 @@ namespace Forecaster.Client.Network
 
                 using (AsynchronousClient client = new AsynchronousClient())
                 {
-                    //client.ExceptionReport += (sender, e) =>
-                    //{
-                    //    window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
-                    //        MessageBox.Show(e.Exception.Message, Application.ProductName,
-                    //            MessageBoxButtons.OK, MessageBoxIcon.Error)));
-                    //};
+                    client.ExceptionReport += (sender, e) =>
+                    {
+                        if (e.Exception.Message == "lol")
+                            return;
+                        //window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
+                        //    MessageBox.Show(e.Exception.Message, Application.ProductName,
+                        //        MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    };
 
                     client.Connect(Dns.GetHostName());
 
@@ -58,6 +60,14 @@ namespace Forecaster.Client.Network
 
                 using (client)
                 {
+                    client.ExceptionReport += (sender, e) =>
+                    {
+                        client.Dispose();
+                        //window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
+                        //    MessageBox.Show(e.Exception.Message, Application.ProductName,
+                        //        MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    };
+
                     client.Connect(Dns.GetHostName());
 
                     client.SendData(requestBytes);

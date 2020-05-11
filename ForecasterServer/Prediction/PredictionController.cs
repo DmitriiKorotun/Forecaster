@@ -1,7 +1,7 @@
-﻿using Forecaster.Forecasting.Entities;
+﻿using Csv;
+using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Net;
-using Forecaster.Server.Csv;
 using Forecaster.Server.TempIO;
 using Forecaster.TempIO;
 using System;
@@ -57,14 +57,14 @@ namespace Forecaster.Server.Prediction
 
         private static List<string[]> ReadCSV(string pathToCSV)
         {
-            List<string[]> csvData = Reader.ReadCSV(pathToCSV);
+            List<string[]> csvData = CsvReader.Read(pathToCSV);
 
             return csvData;
         }
 
         private static List<string[]> ConvertCSV(byte[] csvBytes)
         {
-            List<string[]> csvData = CsvConverter.Convert(csvBytes).ToList();
+            List<string[]> csvData = CsvReader.ReadFromBytes(csvBytes).ToList();
 
             return csvData;
         }

@@ -75,7 +75,6 @@
   <ItemGroup>
     <Compile Include="AsynchronousSocketListener.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="Csv\CsvReader.cs" />
     <Compile Include="Local\FileManager.cs" />
     <Compile Include="Local\Initializer.cs" />
     <Compile Include="Local\Logging\ILogger.cs" />
@@ -85,15 +84,17 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateObject.cs" />
-    <Compile Include="TempIO\CsvConverter.cs" />
     <Compile Include="TempIO\DatasetCreator.cs" />
-    <Compile Include="TempIO\Reader.cs" />
     <Compile Include="TempIO\Writer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestFCClient\Forecaster.Net\Forecaster.Net.csproj">
       <Project>{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}</Project>
       <Name>Forecaster.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Csv\Csv.csproj">
+      <Project>{ef46b67e-a670-4308-98d3-72ba4aaaa5d7}</Project>
+      <Name>Csv</Name>
     </ProjectReference>
     <ProjectReference Include="..\Forecaster\Forecaster.csproj">
       <Project>{4df1528c-87be-49ec-a804-f4fb2e7363c5}</Project>

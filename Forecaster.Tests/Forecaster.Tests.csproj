@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Csv\Csv.csproj">
+      <Project>{ef46b67e-a670-4308-98d3-72ba4aaaa5d7}</Project>
+      <Name>Csv</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ForecasterServer\Forecaster.Server.csproj">
       <Project>{e5471e3f-02b9-495d-8249-af36c683e1e5}</Project>
       <Name>Forecaster.Server</Name>

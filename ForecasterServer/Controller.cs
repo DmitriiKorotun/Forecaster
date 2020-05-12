@@ -17,7 +17,10 @@ namespace Forecaster.Server
 {
     public static class Controller
     {
-        static Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } = new Dictionary<ushort, IPredictionAlgorithm>() { {1, new MovingAverage()} };
+        static Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } =
+            new Dictionary<ushort, IPredictionAlgorithm>() {
+                {1, new MovingAverage()}, {2, new LinearRegression() } 
+            };
 
         public static byte[] GetResponse(byte[] receivedData)
         {

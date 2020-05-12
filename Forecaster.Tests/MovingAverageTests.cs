@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Csv;
 using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Server.Prediction;
@@ -20,7 +21,7 @@ namespace Forecaster.Tests
             // arrange
             IPredictionAlgorithm movingAverage = new MovingAverage();
 
-            IEnumerable<BasicDataset> dataset = GetDataset("fortests/NSE-TATAGLOBAL11.csv").Reverse();
+            IEnumerable<StockDataset> dataset = GetDataset("fortests/NSE-TATAGLOBAL11.csv").Reverse();
          
             // act
             List<BasicDataset> prediction = movingAverage.Predict(dataset);
@@ -31,9 +32,9 @@ namespace Forecaster.Tests
             Assert.IsTrue(prediction.Count > 0);
         }
 
-        private IEnumerable<BasicDataset> GetDataset(string pathToCSV)
+        private IEnumerable<StockDataset> GetDataset(string pathToCSV)
         {
-            List<string[]> csvData = Reader.ReadCSV(pathToCSV);
+            List<string[]> csvData = CsvReader.Read(pathToCSV);
 
             List<StockDataset> dataset = new List<StockDataset>();
 

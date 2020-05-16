@@ -47,7 +47,7 @@ namespace Forecaster.Forecasting.Prediction
             return predictedData;
         }
 
-        public List<BasicDataset> Predict(IEnumerable<StockDataset> average)
+        public IEnumerable<BasicDataset> Predict(IEnumerable<StockDataset> average)
         {
             SplitSet(average, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
 

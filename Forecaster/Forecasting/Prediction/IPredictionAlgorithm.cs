@@ -9,6 +9,6 @@ namespace Forecaster.Forecasting.Prediction
 {
     public interface IPredictionAlgorithm
     {
-        List<BasicDataset> Predict(IEnumerable<StockDataset> dataset);
+        IEnumerable<BasicDataset> Predict(IEnumerable<StockDataset> dataset);
     }
 }

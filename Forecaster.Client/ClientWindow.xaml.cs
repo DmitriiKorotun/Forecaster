@@ -100,7 +100,7 @@ namespace Forecaster.Client
             Dictionary<ushort, string> items = new Dictionary<ushort, string> {
                 { (ushort)PredictionAlgorithm.MovingAverage, "Moving Average" },
                 { (ushort)PredictionAlgorithm.LinearRegression, "Linear Regression" },
-                { (ushort)PredictionAlgorithm.LSTM, "LSTM" }
+                { (ushort)PredictionAlgorithm.KNearest, "KNearestNeighbours" }
             };
             cb_algList.ItemsSource = items;
             cb_algList.SelectedIndex = 0;

@@ -20,6 +20,12 @@ namespace Forecaster.Forecasting.Entities
             Close = close;
         }
 
+        public BasicDataset(DateTime date, double close)
+        {
+            Date = date;
+            Close = (decimal)close;
+        }
+
         public override string ToString()
         {
             string datasetString = "";

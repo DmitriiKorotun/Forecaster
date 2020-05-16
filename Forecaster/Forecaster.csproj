@@ -62,10 +62,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataHandlers\DataTableConverter.cs" />
+    <Compile Include="DataHandlers\DatePart\DatePart.cs" />
+    <Compile Include="DataHandlers\DatePart\DatePartCreator.cs" />
     <Compile Include="DataHandlers\DateTable\DateTableHandler.cs" />
     <Compile Include="Forecasting\Entities\BasicDataset.cs" />
     <Compile Include="Forecasting\Entities\StockDataset.cs" />
     <Compile Include="Forecasting\Prediction\IPredictionAlgorithm.cs" />
+    <Compile Include="Forecasting\Prediction\KNearestNeighbors.cs" />
     <Compile Include="Forecasting\Prediction\LinearRegression.cs" />
     <Compile Include="Forecasting\Prediction\MovingAverage.cs" />
     <Compile Include="Program.cs" />

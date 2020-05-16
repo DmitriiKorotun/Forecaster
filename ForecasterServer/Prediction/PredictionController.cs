@@ -14,14 +14,14 @@ namespace Forecaster.Server.Prediction
 {
     public static class PredictionController
     {
-        public static List<BasicDataset> Predict(List<StockDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
+        public static IEnumerable<BasicDataset> Predict(List<StockDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
         {
             List<StockDataset> orderedSet = OrderSet(dataset);
 
             return predictionAlgorithm.Predict(orderedSet);
         }
 
-        public static List<BasicDataset> Predict(string pathToCSV, IPredictionAlgorithm predictionAlgorithm)
+        public static IEnumerable<BasicDataset> Predict(string pathToCSV, IPredictionAlgorithm predictionAlgorithm)
         {
             List<string[]> csvData = ReadCSV(pathToCSV);
 
@@ -29,14 +29,14 @@ namespace Forecaster.Server.Prediction
         }
 
 
-        public static List<BasicDataset> Predict(byte[] fileBytes, IPredictionAlgorithm predictionAlgorithm)
+        public static IEnumerable<BasicDataset> Predict(byte[] fileBytes, IPredictionAlgorithm predictionAlgorithm)
         {
             List<string[]> csvData = ConvertCSV(fileBytes);
 
             return Predict(csvData, predictionAlgorithm);
         }
 
-        private static List<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm)
+        private static IEnumerable<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm)
         {
             DatasetCreator datasetCreator = new DatasetCreator();
 

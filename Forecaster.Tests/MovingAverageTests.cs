@@ -22,14 +22,14 @@ namespace Forecaster.Tests
             IPredictionAlgorithm movingAverage = new MovingAverage();
 
             IEnumerable<StockDataset> dataset = GetDataset("fortests/NSE-TATAGLOBAL11.csv").Reverse();
-         
+
             // act
-            List<BasicDataset> prediction = movingAverage.Predict(dataset);
+            IEnumerable<BasicDataset> prediction = movingAverage.Predict(dataset);
 
             var expectedPrediction = prediction;
 
             // assert
-            Assert.IsTrue(prediction.Count > 0);
+            Assert.IsTrue(prediction.Count() > 0);
         }
 
         private IEnumerable<StockDataset> GetDataset(string pathToCSV)

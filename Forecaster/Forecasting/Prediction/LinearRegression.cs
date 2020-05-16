@@ -9,54 +9,32 @@ using System.Collections.Generic;
 using Accord.Math.Optimization.Losses;
 using Forecaster.DataConverters;
 using Forecaster.DataHandlers.DateTable;
+using Forecaster.DataHandlers.DatePart;
 
 namespace Forecaster.Forecasting.Prediction
 {
     public class LinearRegression : IPredictionAlgorithm
     {
-        public List<BasicDataset> Predict(IEnumerable<StockDataset> datasets)
+        public IEnumerable<BasicDataset> Predict(IEnumerable<StockDataset> datasets)
         {
             SplitSet(datasets, out IEnumerable<StockDataset> trainingSet, out IEnumerable<StockDataset> controlSet);
 
             int totalCount = datasets.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
-            //read data
-            DataTable mscTable = DataTableConverter.ConvertToDateTable(datasets);
 
-            DateTableHandler dateTableHandler = new DateTableHandler();
+            DataTable mscTable = GetTableForPrediction(datasets);
+           
+            IEnumerable<DateTime> predictedDates = GetPredictionDates(mscTable, trainingCount, controlCount);
 
-            mscTable = dateTableHandler.SortTable(mscTable, "Date ASC");
+            double[] outResPositive = mscTable.Columns["Close"].ToArray(),
+                outResPositiveTrain = outResPositive.Get(0, trainingCount);
 
-            var datepart = GetDatepartColumns(mscTable.Columns["Date"].ToArray<DateTime>());
+            AddDatepartColumns(mscTable);
 
-            //select the target column
-            double[] outResPositive = mscTable.Columns["Close"].ToArray();
-            DateTime[] allDates = mscTable.Columns["Date"].ToArray<DateTime>(), predictedDates = new DateTime[controlCount];
+            RemoveUnneededColumns(mscTable);
 
-            for (int i = 0; i < predictedDates.Length; ++i)
-            {
-                predictedDates[i] = allDates[trainingCount + i];
-            }
-
-            // separation of the test and train target sample
-            double[] outResPositiveTrain = outResPositive.Get(0, trainingCount);
-            double[] outResPositiveTest = outResPositive.Get(trainingCount, totalCount);
-
-            dateTableHandler.RemoveColumnRange(mscTable,
-                new string[] { "Close", "Date", "Open", "High", "Low", "Last", "Total Trade Quantity", "Turnover (Lacs)"}
-                );
-
-            var columnsToAdd = CreateNewColumnList();
-
-            dateTableHandler.AddColumnRange(mscTable, columnsToAdd);
-
-            dateTableHandler.FillColumnRange(mscTable, columnsToAdd, datepart);
-
-            //receiving input data from a table
-            double[][] inputs = mscTable.ToJagged(System.Globalization.CultureInfo.InvariantCulture);
-
-            //separation of the test and train sample
-            double[][] inputsTrain = inputs.Get(0, trainingCount);
-            double[][] inputsPredict = inputs.Get(trainingCount, totalCount);
+            double[][] inputs = mscTable.ToJagged(System.Globalization.CultureInfo.InvariantCulture),
+                inputsTrain = inputs.Get(0, trainingCount),
+                inputsPredict = inputs.Get(trainingCount, totalCount);
 
             double[] predicted = Predict(inputsTrain, outResPositiveTrain, inputsPredict);
 
@@ -75,23 +53,63 @@ namespace Forecaster.Forecasting.Prediction
             return regression.Transform(inputsPredict);
         }
 
-        private BasicDataset ConvertToDataset(DateTime date, decimal close)
+        private DataTable GetTableForPrediction(IEnumerable<StockDataset> datasets)
         {
-            return new BasicDataset(date, close);
+            DateTableHandler dateTableHandler = new DateTableHandler();
+
+            DataTable table = DataTableConverter.ConvertToDateTable(datasets);
+
+            DataTable sortedTable = dateTableHandler.SortTable(table, "Date ASC");
+
+            return sortedTable;
         }
 
-        private BasicDataset ConvertToDataset(DateTime date, double close)
+        private IEnumerable<DateTime> GetPredictionDates(DataTable table, int trainingCount, int controlCount)
         {
-            return new BasicDataset(date, (decimal)close);
+            DateTime[] allDates = table.Columns["Date"].ToArray<DateTime>();
+
+            List<DateTime> predictedDates = new List<DateTime>(controlCount);
+
+            for (int i = 0; i < predictedDates.Capacity; ++i)
+                predictedDates.Add(allDates[trainingCount + i]);
+
+            return predictedDates;
         }
 
-        private List<BasicDataset> ConvertToDatasetRange(DateTime[] dates, decimal[] closes)
+        private void AddDatepartColumns(DataTable table)
         {
-            List<BasicDataset> datasets = new List<BasicDataset>(dates.Length);
+            DateTableHandler dateTableHandler = new DateTableHandler();
+
+            IEnumerable<DateTime> dates = table.Columns["Date"].ToArray<DateTime>();
+
+            IEnumerable<DatePart> dateparts = DatePart.CreateFromDates(dates);
+
+            string[] headers = new string[] {
+                "Year", "Month", "DayOfYear", "DayOfMonth", "DayOfWeek", "IsMonthStart",
+                "IsMonthEnd", "IsYearStart", "IsYearEnd", "IsMonOrFri"
+            };
+
+            dateTableHandler.CreateColumnRange<double>(table, headers);
+
+            dateTableHandler.FillColumnRange(table, headers, dateparts);
+        }
+
+        private void RemoveUnneededColumns(DataTable table)
+        {
+            DateTableHandler dateTableHandler = new DateTableHandler();
+
+            dateTableHandler.RemoveColumnRange(table,
+                new string[] { "Close", "Date", "Open", "High", "Low", "Last", "Total Trade Quantity", "Turnover (Lacs)" }
+                );
+        }
+
+        private IEnumerable<BasicDataset> ConvertToDatasetRange(IEnumerable<DateTime> dates, IEnumerable<decimal> closes)
+        {
+            List<BasicDataset> datasets = new List<BasicDataset>(dates.Count());
 
             for (int i = 0; i < datasets.Count; ++i)
             {
-                BasicDataset dataset = ConvertToDataset(dates[i], closes[i]);
+                BasicDataset dataset = new BasicDataset(dates.ElementAt(i), closes.ElementAt(i));
 
                 datasets.Add(dataset);
             }
@@ -99,13 +117,13 @@ namespace Forecaster.Forecasting.Prediction
             return datasets;
         }
 
-        private List<BasicDataset> ConvertToDatasetRange(DateTime[] dates, double[] closes)
+        private IEnumerable<BasicDataset> ConvertToDatasetRange(IEnumerable<DateTime> dates, IEnumerable<double> closes)
         {
-            List<BasicDataset> datasets = new List<BasicDataset>(dates.Length);
+            List<BasicDataset> datasets = new List<BasicDataset>(dates.Count());
 
             for (int i = 0; i < datasets.Capacity; ++i)
             {
-                BasicDataset dataset = ConvertToDataset(dates[i], closes[i]);
+                BasicDataset dataset = new BasicDataset(dates.ElementAt(i), closes.ElementAt(i));
 
                 datasets.Add(dataset);
             }
@@ -122,200 +140,6 @@ namespace Forecaster.Forecasting.Prediction
             trainingSet = datasets.Take(trainingSize);
 
             controlSet = datasets.Skip(trainingSize).Take(controlSize);
-        }
-
-        private static List<double[]> GetDatepartColumns(DateTime[] trainDataDates)
-        {
-            var datepartList = new List<double[]>(10)
-            {
-                GetYearColumn(trainDataDates),
-                GetMonthColumn(trainDataDates),
-                GetDayOfYearColumn(trainDataDates),
-                GetDayOfMonthColumn(trainDataDates),
-                GetDayOfWeekColumn(trainDataDates),
-
-                GetIsMonthStartColumn(trainDataDates),
-                GetIsMonthEndColumn(trainDataDates),
-                GetIsYearStartColumn(trainDataDates),
-                GetIsYearEndColumn(trainDataDates),
-                GetIsMonOrFriColumn(trainDataDates)
-            };
-
-            return datepartList;
-        }
-
-        private static List<DataColumn> CreateNewColumnList()
-        {
-            var columnList = new List<DataColumn>(10)
-            {
-                CreateNewColumns<double>("Year"),
-                CreateNewColumns<double>("Month"),
-                CreateNewColumns<double>("DayOfYear"),
-                CreateNewColumns<double>("DayOfMonth"),
-                CreateNewColumns<double>("DayOfWeek"),
-                CreateNewColumns<double>("IsMonthStart"),
-                CreateNewColumns<double>("IsMonthEnd"),
-                CreateNewColumns<double>("IsYearStart"),
-                CreateNewColumns<double>("IsYearEnd"),
-                CreateNewColumns<double>("IsMonOrFri")
-            };
-
-            return columnList;
-        }
-
-        private static DataColumn CreateNewColumns<T>(string label)
-        {
-            DataColumn newCol = new DataColumn(label, typeof(T))
-            {
-                AllowDBNull = true
-            };
-
-            return newCol;
-        }
-
-        private static void WritePredicted(double[] predicted, DateTime[] predictedDates)
-        {
-            var lines = new string[predicted.Length];
-
-            for (int i = 0; i < lines.Length; ++i)
-                lines[i] = predictedDates[i].ToString("yyyy-MM-dd") + ',' + predicted[i].ToString(System.Globalization.CultureInfo.InvariantCulture);
-
-            System.IO.File.WriteAllLines("predictedStockList.txt", lines);
-        }
-
-        private static double[] GetDayOfYearColumn(DateTime[] trainDataDates)
-        {
-            double[] daysOfYear = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                daysOfYear[i] = trainDataDates[i].DayOfYear;
-            }
-
-            return daysOfYear;
-        }
-
-        private static double[] GetDayOfWeekColumn(DateTime[] trainDataDates)
-        {
-            double[] daysOfYear = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                daysOfYear[i] = (double)trainDataDates[i].DayOfWeek;
-            }
-
-            return daysOfYear;
-        }
-
-        private static double[] GetDayOfMonthColumn(DateTime[] trainDataDates)
-        {
-            double[] daysOfMonth = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                daysOfMonth[i] = (double)trainDataDates[i].Day;
-            }
-
-            return daysOfMonth;
-        }
-
-        private static double[] GetYearColumn(DateTime[] trainDataDates)
-        {
-            double[] daysOfYear = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                daysOfYear[i] = trainDataDates[i].Year;
-            }
-
-            return daysOfYear;
-        }
-
-        private static double[] GetMonthColumn(DateTime[] trainDataDates)
-        {
-            double[] daysOfYear = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                daysOfYear[i] = trainDataDates[i].Month;
-            }
-
-            return daysOfYear;
-        }
-
-        private static double[] GetIsMonthStartColumn(DateTime[] trainDataDates)
-        {
-            double[] isMonthStart = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                if (trainDataDates[i].Day < 4)
-                    isMonthStart[i] = 1;
-                else
-                    isMonthStart[i] = 0;
-            }
-
-            return isMonthStart;
-        }
-
-        private static double[] GetIsMonthEndColumn(DateTime[] trainDataDates)
-        {
-            double[] isMonthEnd = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                if (trainDataDates[i].Day > 26)
-                    isMonthEnd[i] = 1;
-                else
-                    isMonthEnd[i] = 0;
-            }
-
-            return isMonthEnd;
-        }
-
-        private static double[] GetIsYearStartColumn(DateTime[] trainDataDates)
-        {
-            double[] isYearStart = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                if (trainDataDates[i].DayOfYear < 20)
-                    isYearStart[i] = 1;
-                else
-                    isYearStart[i] = 0;
-            }
-
-            return isYearStart;
-        }
-
-        private static double[] GetIsYearEndColumn(DateTime[] trainDataDates)
-        {
-            double[] isYearEnd = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                if (trainDataDates[i].DayOfYear > 345)
-                    isYearEnd[i] = 1;
-                else
-                    isYearEnd[i] = 0;
-            }
-
-            return isYearEnd;
-        }
-
-        private static double[] GetIsMonOrFriColumn(DateTime[] trainDataDates)
-        {
-            double[] isMonOrFri = new double[trainDataDates.Length];
-
-            for (int i = 0; i < trainDataDates.Length; i++)
-            {
-                if (trainDataDates[i].DayOfWeek == DayOfWeek.Friday || trainDataDates[i].DayOfWeek == DayOfWeek.Monday)
-                    isMonOrFri[i] = 1;
-                else
-                    isMonOrFri[i] = 0;
-            }
-
-            return isMonOrFri;
         }
     }
 }

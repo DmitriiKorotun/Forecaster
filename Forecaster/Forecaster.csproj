@@ -50,6 +50,9 @@
     <Reference Include="Accord.Statistics, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Statistics.3.8.0\lib\net462\Accord.Statistics.dll</HintPath>
     </Reference>
+    <Reference Include="Extreme.Numerics, Version=7.0.12.0, Culture=neutral, PublicKeyToken=9e513770f58567b2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extreme.Numerics.7.0.12\lib\net46\Extreme.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -67,6 +70,7 @@
     <Compile Include="DataHandlers\DateTable\DateTableHandler.cs" />
     <Compile Include="Forecasting\Entities\BasicDataset.cs" />
     <Compile Include="Forecasting\Entities\StockDataset.cs" />
+    <Compile Include="Forecasting\Prediction\AutoArima.cs" />
     <Compile Include="Forecasting\Prediction\IPredictionAlgorithm.cs" />
     <Compile Include="Forecasting\Prediction\KNearestNeighbors.cs" />
     <Compile Include="Forecasting\Prediction\LinearRegression.cs" />

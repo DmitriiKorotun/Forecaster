@@ -38,6 +38,7 @@ namespace Forecaster.Client
             MovingAverage = 1,
             LinearRegression = 2,
             KNearest = 4,
+            AutoArima = 8,
             LSTM = 128
         }
 
@@ -100,7 +101,8 @@ namespace Forecaster.Client
             Dictionary<ushort, string> items = new Dictionary<ushort, string> {
                 { (ushort)PredictionAlgorithm.MovingAverage, "Moving Average" },
                 { (ushort)PredictionAlgorithm.LinearRegression, "Linear Regression" },
-                { (ushort)PredictionAlgorithm.KNearest, "KNearestNeighbours" }
+                { (ushort)PredictionAlgorithm.KNearest, "KNearestNeighbours" },
+                { (ushort)PredictionAlgorithm.AutoArima, "AutoARIMA" }
             };
             cb_algList.ItemsSource = items;
             cb_algList.SelectedIndex = 0;

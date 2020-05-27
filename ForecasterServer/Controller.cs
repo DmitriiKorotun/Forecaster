@@ -19,7 +19,7 @@ namespace Forecaster.Server
     {
         static Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } =
             new Dictionary<ushort, IPredictionAlgorithm>() {
-                {1, new MovingAverage()}, {2, new LinearRegression() }, {4, new KNearestNeighbors() } 
+                {1, new MovingAverage()}, {2, new LinearRegression() }, {4, new KNearestNeighbors() }, {8, new AutoArima() }
             };
 
         public static byte[] GetResponse(byte[] receivedData)

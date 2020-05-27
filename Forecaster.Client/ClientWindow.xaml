@@ -45,19 +45,22 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20*"></RowDefinition>
-                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
                 <RowDefinition Height="60*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*"></ColumnDefinition>
                 <ColumnDefinition Width="5*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv" Name="tb_fileToUpload" Height="23" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True"/>
+            <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv" Name="tb_fileToUpload" Height="23" Grid.ColumnSpan="2" VerticalAlignment="Center" IsReadOnly="True"/>
             <Button Margin="5, 0" Content="Chose file" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Click="Button_Click"/>
             <Button Margin="5, 0" Content="Upload" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
-            <ComboBox Name="cb_algList" Margin="5, 0" Grid.Row="2" VerticalAlignment="Top" Grid.ColumnSpan="2"
+            <ComboBox Name="cb_algList" Margin="5, 10" Grid.Row="3" VerticalAlignment="Top" Grid.ColumnSpan="2"
                       SelectedValuePath="Key" DisplayMemberPath="Value"/>
-            <Button Name="btn_fillDiagramm" Margin="5, 5" Content="Fill diagramm" Grid.Row="1" VerticalAlignment="Bottom" Click="btn_fillDiagramm_Click"/>
+            <Button Name="btn_fillDiagramm" Margin="5, 5" Content="Fill diagramm"
+                    Grid.Row="2" VerticalAlignment="Center" Grid.ColumnSpan="2" 
+                    Click="btn_fillDiagramm_Click"/>
         </Grid>
 
     </Grid>

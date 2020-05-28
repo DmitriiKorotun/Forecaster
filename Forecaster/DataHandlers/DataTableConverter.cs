@@ -10,7 +10,7 @@ namespace Forecaster.DataConverters
 {
     public static class DataTableConverter
     {
-        public static DataTable ConvertToDateTable(IEnumerable<StockDataset> datasets)
+        public static DataTable ConvertToDateTable(IEnumerable<BasicDataset> datasets)
         {
             DataTable datasetsTable = new DataTable();
 
@@ -29,13 +29,13 @@ namespace Forecaster.DataConverters
                 table.Columns.Add(header);
         }
 
-        private static void AddRows(DataTable table, IEnumerable<StockDataset> datasets)
+        private static void AddRows(DataTable table, IEnumerable<BasicDataset> datasets)
         {
-            foreach (StockDataset dataset in datasets)
+            foreach (BasicDataset dataset in datasets)
                 AddRow(table, dataset);
         }
 
-        private static void AddRow(DataTable table, StockDataset dataset)
+        private static void AddRow(DataTable table, BasicDataset dataset)
         {
             DataRow row = table.NewRow();
 

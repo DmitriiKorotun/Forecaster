@@ -18,18 +18,18 @@ namespace Forecaster.Forecasting.Entities
         public decimal Turnover { get; set; }
 
         public StockDataset() { }
-        public StockDataset(string stockLine)
-        {
-            var stockStringValues = stockLine.Split(',');
 
-            ApplyStockStringValues(stockStringValues);
-        }
-        public StockDataset(string[] stockStringValues)
+        public StockDataset(string stockLine) : base(stockLine)
         {
-            ApplyStockStringValues(stockStringValues);
+
         }
 
-        private void ApplyStockStringValues(string[] stockStringValues)
+        public StockDataset(string[] stockStringValues) : base(stockStringValues)
+        {
+
+        }
+
+        protected override void ApplyStockStringValues(string[] stockStringValues)
         {
             for (int i = 0; i < stockStringValues.Length && i < 8; ++i)
             {

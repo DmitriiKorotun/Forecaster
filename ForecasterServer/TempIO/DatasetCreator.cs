@@ -23,12 +23,16 @@ namespace Forecaster.Server.TempIO
         //    Turnover
         //}
 
-        private readonly Dictionary<string, string> datasetHeaders = new Dictionary<string, string>() {
+        private readonly Dictionary<string, string> extendedHeaders = new Dictionary<string, string>() {
             {"Date", "Date"}, {"High", "High"}, {"Open", "Open"}, {"Close", "Close"}, { "Low","Low" },
             {"Last", "Last" }, {"TotalTradeQuantity", "Total Trade Quantity" }, {"Turnover", "Turnover (Lacs)" }
         };
 
-        public IEnumerable<StockDataset> CreateFromCsv(IEnumerable<string[]> csvContent)
+        private readonly Dictionary<string, string> vitalHeaders = new Dictionary<string, string>() {
+            {"Date", "Date"}, {"Close", "Close"}
+        };
+
+        public IEnumerable<StockDataset> CreateExtendedFromCsv(IEnumerable<string[]> csvContent)
         {
             IEnumerable<StockDataset> datasets;
 
@@ -36,16 +40,33 @@ namespace Forecaster.Server.TempIO
                 throw new Exception("File is empty");
 
             string[] headers = csvContent.ElementAt(0),
-                headersToSearch = datasetHeaders.Values.ToArray();
+                headersToSearch = extendedHeaders.Values.ToArray();
 
             Dictionary<string, int> headersPosition = CsvReader.GetHeadersPosition(headers, headersToSearch);
 
-            datasets = CreateDatasetRange(csvContent, headersPosition);
+            datasets = CreateStockDatasetRange(csvContent, headersPosition);
 
             return datasets;
         }
 
-        private IEnumerable<StockDataset> CreateDatasetRange(IEnumerable<string[]> csvContent, Dictionary<string, int> headersPosition)
+        public IEnumerable<BasicDataset> CreateFromCsv(IEnumerable<string[]> csvContent)
+        {
+            IEnumerable<BasicDataset> datasets;
+
+            if (csvContent.Count() < 1)
+                throw new Exception("File is empty");
+
+            string[] headers = csvContent.ElementAt(0),
+                headersToSearch = vitalHeaders.Values.ToArray();
+
+            Dictionary<string, int> headersPosition = CsvReader.GetHeadersPosition(headers, headersToSearch);
+
+            datasets = CreateBasicDatasetRange(csvContent, headersPosition);
+
+            return datasets;
+        }
+
+        private IEnumerable<StockDataset> CreateStockDatasetRange(IEnumerable<string[]> csvContent, Dictionary<string, int> headersPosition)
         {
             try
             {
@@ -53,7 +74,7 @@ namespace Forecaster.Server.TempIO
 
                 foreach (string[] csvLine in csvContent)
                 {
-                    StockDataset dataset = CreateDataset(csvLine, headersPosition);
+                    StockDataset dataset = CreateStockDataset(csvLine, headersPosition);
 
                     if (dataset != null)
                         datasets.Add(dataset);
@@ -67,25 +88,73 @@ namespace Forecaster.Server.TempIO
             }
         }
 
-        private StockDataset CreateDataset(string[] csvLine, Dictionary<string, int> headersPosition)
+        private IEnumerable<BasicDataset> CreateBasicDatasetRange(IEnumerable<string[]> csvContent, Dictionary<string, int> headersPosition)
+        {
+            try
+            {
+                List<BasicDataset> datasets = new List<BasicDataset>(csvContent.Count());
+
+                foreach (string[] csvLine in csvContent)
+                {
+                    BasicDataset dataset = CreateBasicDataset(csvLine, headersPosition);
+
+                    if (dataset != null)
+                        datasets.Add(dataset);
+                }
+
+                return datasets;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private StockDataset CreateStockDataset(string[] csvLine, Dictionary<string, int> headersPosition)
         {
             try
             {
                 StockDataset dataset = new StockDataset
                 {
-                    Close = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Close"]),
-                    Last = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Last"]),
-                    Low = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Low"]),
-                    Open = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Open"]),
-                    High = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["High"]),
-                    TotalTradeQuantity = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["TotalTradeQuantity"]),
-                    Turnover = GetCsvDecimal(csvLine, headersPosition, datasetHeaders["Turnover"]),
-                    Date = GetCsvDate(csvLine, headersPosition, datasetHeaders["Date"])
+                    Close = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["Close"]),
+                    Last = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["Last"]),
+                    Low = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["Low"]),
+                    Open = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["Open"]),
+                    High = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["High"]),
+                    TotalTradeQuantity = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["TotalTradeQuantity"]),
+                    Turnover = GetCsvDecimal(csvLine, headersPosition, extendedHeaders["Turnover"]),
+                    Date = GetCsvDate(csvLine, headersPosition, extendedHeaders["Date"])
                 };
 
                 return dataset;
             }
             catch(IndexOutOfRangeException ex)
+            {
+                Console.WriteLine("CreateDataset Exception: " + ex.Message);
+
+                return null;
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine("CreateDataset Exception: " + ex.Message);
+
+                return null;
+            }
+        }
+
+        private BasicDataset CreateBasicDataset(string[] csvLine, Dictionary<string, int> headersPosition)
+        {
+            try
+            {
+                BasicDataset dataset = new BasicDataset
+                {
+                    Close = GetCsvDecimal(csvLine, headersPosition, vitalHeaders["Close"]),
+                    Date = GetCsvDate(csvLine, headersPosition, vitalHeaders["Date"])
+                };
+
+                return dataset;
+            }
+            catch (IndexOutOfRangeException ex)
             {
                 Console.WriteLine("CreateDataset Exception: " + ex.Message);
 

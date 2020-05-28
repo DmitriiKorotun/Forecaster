@@ -44,24 +44,50 @@
         </Grid>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="45*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="45*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <GroupBox Header="Chose File"   Margin="5" BorderBrush="Black" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20*"></RowDefinition>
+                        <RowDefinition Height="20*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Content="Chose file" VerticalAlignment="Center"
+                            Click="Button_Click" Margin="5"/>
+                    <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv"
+                             Name="tb_fileToUpload" Height="24" VerticalAlignment="Center"
+                             IsReadOnly="True" Grid.Row="1" Margin="5"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Manual data input" Grid.Row="2" Margin="5" BorderBrush="Black" BorderThickness="1">
+                <Grid>
+                    <Button Name="btn_manualInput" Content="Manual input" VerticalAlignment="Center"
+                            Margin="5" Click="btn_manualInput_Click"/>
+                </Grid>
+            </GroupBox>
+            <Label Content="Or" Grid.Row="1" HorizontalAlignment="Center"/>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"></RowDefinition>
                 <RowDefinition Height="10*"></RowDefinition>
                 <RowDefinition Height="10*"></RowDefinition>
-                <RowDefinition Height="60*"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*"></ColumnDefinition>
-                <ColumnDefinition Width="5*"></ColumnDefinition>
+                <ColumnDefinition Width="60*"></ColumnDefinition>
+                <ColumnDefinition Width="40*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv" Name="tb_fileToUpload" Height="23" Grid.ColumnSpan="2" VerticalAlignment="Center" IsReadOnly="True"/>
-            <Button Margin="5, 0" Content="Chose file" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Click="Button_Click"/>
-            <Button Margin="5, 0" Content="Upload" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
-            <ComboBox Name="cb_algList" Margin="5, 10" Grid.Row="3" VerticalAlignment="Top" Grid.ColumnSpan="2"
-                      SelectedValuePath="Key" DisplayMemberPath="Value"/>
-            <Button Name="btn_fillDiagramm" Margin="5, 5" Content="Fill diagramm"
-                    Grid.Row="2" VerticalAlignment="Center" Grid.ColumnSpan="2" 
+            <Button Grid.Row="2" Name="btn_fillDiagramm" Content="Fill diagramm"
+                    VerticalAlignment="Center" Margin="5, 0" 
                     Click="btn_fillDiagramm_Click"/>
+            <Button Grid.Row="2" Content="Upload" VerticalAlignment="Center" Click="Button_Click_1" 
+                    Grid.Column="1" Margin="5, 0"/>
+            <ComboBox Name="cb_algList" Grid.Row="1" VerticalAlignment="Center"
+                      SelectedValuePath="Key" DisplayMemberPath="Value"
+                      Margin="5, 0" Grid.ColumnSpan="2"/>
         </Grid>
-
     </Grid>
 </Window>

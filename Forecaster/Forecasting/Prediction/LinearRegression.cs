@@ -15,9 +15,9 @@ namespace Forecaster.Forecasting.Prediction
 {
     public class LinearRegression : IPredictionAlgorithm
     {
-        public IEnumerable<BasicDataset> Predict(IEnumerable<StockDataset> datasets)
+        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> datasets)
         {
-            SplitSet(datasets, out IEnumerable<StockDataset> trainingSet, out IEnumerable<StockDataset> controlSet);
+            SplitSet(datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
 
             int totalCount = datasets.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
 
@@ -53,7 +53,7 @@ namespace Forecaster.Forecasting.Prediction
             return regression.Transform(inputsPredict);
         }
 
-        private DataTable GetTableForPrediction(IEnumerable<StockDataset> datasets)
+        private DataTable GetTableForPrediction(IEnumerable<BasicDataset> datasets)
         {
             DateTableHandler dateTableHandler = new DateTableHandler();
 
@@ -131,7 +131,7 @@ namespace Forecaster.Forecasting.Prediction
             return datasets;
         }
 
-        private void SplitSet(IEnumerable<StockDataset> datasets, out IEnumerable<StockDataset> trainingSet, out IEnumerable<StockDataset> controlSet)
+        private void SplitSet(IEnumerable<BasicDataset> datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet)
         {
             int datasetCount = datasets.Count(),
                 trainingSize = (int)Math.Ceiling(datasetCount * 0.8),

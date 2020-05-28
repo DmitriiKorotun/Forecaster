@@ -14,9 +14,9 @@ namespace Forecaster.Server.Prediction
 {
     public static class PredictionController
     {
-        public static IEnumerable<BasicDataset> Predict(List<StockDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
+        public static IEnumerable<BasicDataset> Predict(List<BasicDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
         {
-            List<StockDataset> orderedSet = OrderSet(dataset);
+            List<BasicDataset> orderedSet = OrderSet(dataset);
 
             return predictionAlgorithm.Predict(orderedSet);
         }
@@ -40,14 +40,14 @@ namespace Forecaster.Server.Prediction
         {
             DatasetCreator datasetCreator = new DatasetCreator();
 
-            List<StockDataset> stockList = datasetCreator.CreateFromCsv(csvData).ToList();
+            List<BasicDataset> stockList = datasetCreator.CreateFromCsv(csvData).ToList();
 
             return Predict(stockList, predictionAlgorithm);
         }
 
-        private static List<StockDataset> OrderSet(List<StockDataset> dataset, bool isAscending = true)
+        private static List<BasicDataset> OrderSet(List<BasicDataset> dataset, bool isAscending = true)
         {
-            List<StockDataset> orderedSet = dataset.OrderBy(item => item.Date).ToList();
+            List<BasicDataset> orderedSet = dataset.OrderBy(item => item.Date).ToList();
 
             if (!isAscending)
                 orderedSet.Reverse();
@@ -69,9 +69,9 @@ namespace Forecaster.Server.Prediction
             return csvData;
         }
 
-        private static List<StockDataset> CreateStockList(List<string[]> inputData, int count, int inputOffset)
+        private static List<BasicDataset> CreateStockList(List<string[]> inputData, int count, int inputOffset)
         {
-            List<StockDataset> stockList = new List<StockDataset>();
+            List<BasicDataset> stockList = new List<BasicDataset>();
 
             FillList(stockList, inputData, count, inputOffset);
 
@@ -83,7 +83,7 @@ namespace Forecaster.Server.Prediction
             int lastIndex = inputOffset + count;
 
             for (int i = inputOffset; i < lastIndex; ++i)
-                stockList.Add(new StockDataset(inputData[i]));
+                stockList.Add(new BasicDataset(inputData[i]));
         }
 
         private static void FillList(List<StockDataset> stockList, List<string[]> inputData, int count, int inputOffset)

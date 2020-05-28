@@ -48,6 +48,8 @@ namespace Forecaster.Client
         private AsynchronousClient Client { get; set; }
         public Painter DiagrammPainter { get; set; }
 
+        private byte[] DataToPredict { get; set; }
+
         public ClientWindow()
         {
             InitializeComponent();
@@ -120,12 +122,19 @@ namespace Forecaster.Client
         {
             try
             {
-                if (string.IsNullOrEmpty(tb_fileToUpload.Text))
-                    throw new ArgumentException("Path to file can not be empty");
-
                 ushort selectedAlgorithm = (ushort)cb_algList.SelectedValue;
 
-                ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, Client);
+                if (DataToPredict != null)
+                {
+                    ClientController.SendFile(DataToPredict, selectedAlgorithm, Client);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(tb_fileToUpload.Text))
+                        throw new ArgumentException("Path to file can not be empty");
+
+                    ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, Client);
+                }
             }
             catch (Exception ex)
             {
@@ -172,6 +181,20 @@ namespace Forecaster.Client
         {
             if (DataContext == null)
                 DataContext = this;
+        }
+
+        private void btn_manualInput_Click(object sender, RoutedEventArgs e)
+        {
+            ManualInputWindow manualInputWindow = new ManualInputWindow();
+
+            manualInputWindow.OnInputReturn += Kekovuce;
+
+            manualInputWindow.ShowDialog();
+        }
+
+        private void Kekovuce(byte[] arr)
+        {
+            DataToPredict = arr;
         }
     }
 }

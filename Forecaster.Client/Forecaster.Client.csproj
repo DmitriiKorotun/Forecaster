@@ -73,6 +73,9 @@
     <Compile Include="Local\Reader.cs" />
     <Compile Include="Local\Writer.cs" />
     <Compile Include="Logging\RamLogger.cs" />
+    <Compile Include="ManualInputWindow.xaml.cs">
+      <DependentUpon>ManualInputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Network\ClientExceptionHandler.cs" />
     <Compile Include="Network\ExceptionReportEventArgs.cs" />
     <Compile Include="Network\ClientController.cs" />
@@ -89,6 +92,10 @@
       <DependentUpon>ClientWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ManualInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -121,6 +128,10 @@
     <ProjectReference Include="..\..\TestFCClient\Forecaster.Net\Forecaster.Net.csproj">
       <Project>{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}</Project>
       <Name>Forecaster.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Forecaster\Forecaster.csproj">
+      <Project>{4DF1528C-87BE-49EC-A804-F4FB2E7363C5}</Project>
+      <Name>Forecaster</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -1,4 +1,5 @@
-﻿using Forecaster.Client.CSV;
+﻿using Csv;
+using Forecaster.Client.CSV;
 using Forecaster.Client.Drawing;
 using Forecaster.Client.Local;
 using Forecaster.Client.Network;
@@ -49,6 +50,8 @@ namespace Forecaster.Client
         public Painter DiagrammPainter { get; set; }
 
         private byte[] DataToPredict { get; set; }
+
+        private bool IsManualSelected { get; set; }
 
         public ClientWindow()
         {
@@ -116,6 +119,10 @@ namespace Forecaster.Client
 
             if (ofd.ShowDialog() == true)
                 tb_fileToUpload.Text = ofd.FileName;
+
+            IsManualSelected = false;
+
+            ChangeInputGBoxVisual();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -158,7 +165,14 @@ namespace Forecaster.Client
 
         private void btn_fillDiagramm_Click(object sender, RoutedEventArgs e)
         {
-            List<string[]> csvContent = Reader.ReadCSV(tb_fileToUpload.Text);
+            List<string[]> csvContent;
+
+            if (DataToPredict != null)
+            {
+                csvContent = CsvReader.ReadFromBytes(DataToPredict).ToList();
+            }
+            else
+                csvContent = Reader.ReadCSV(tb_fileToUpload.Text);
 
             Dictionary<DateTime, double> csvDictionary = CsvConverter.ConvertToDictionary(csvContent);
 
@@ -187,14 +201,45 @@ namespace Forecaster.Client
         {
             ManualInputWindow manualInputWindow = new ManualInputWindow();
 
-            manualInputWindow.OnInputReturn += Kekovuce;
+            manualInputWindow.OnInputReturn += SetManualData;
 
-            manualInputWindow.ShowDialog();
+            if (manualInputWindow.ShowDialog() == true) 
+            {
+                IsManualSelected = true;
+
+                ChangeInputGBoxVisual();
+            }        
         }
 
-        private void Kekovuce(byte[] arr)
+        private void SetManualData(byte[] arr)
         {
             DataToPredict = arr;
+        }
+
+        private void ChangeInputGBoxVisual()
+        {
+            if (IsManualSelected)
+            {
+                ChangeGroupBoxBorder(gbox_manualInput, true);
+                ChangeGroupBoxBorder(gbox_choseFile, false);
+            }
+            else
+            {
+                ChangeGroupBoxBorder(gbox_manualInput, false);
+                ChangeGroupBoxBorder(gbox_choseFile, true);
+            }
+        }
+
+        private void ChangeGroupBoxBorder(GroupBox gbox, bool isSelected)
+        {
+            if (isSelected)
+            {
+                gbox.BorderBrush = new SolidColorBrush(Colors.Black);
+
+                gbox.BorderThickness = new Thickness(1);
+            }
+            else
+                gbox.BorderThickness = new Thickness(0);
         }
     }
 }

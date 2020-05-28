@@ -22,13 +22,15 @@ namespace Forecaster.Client
     public partial class ManualInputWindow : Window
     {
         public event Action<byte[]> OnInputReturn;
-        public ObservableCollection<BasicDataset> Entries { get; }
+        public ObservableCollection<BasicDataset> Entries { get; set; }
 
         public ManualInputWindow()
         {
             InitializeComponent();
 
             Entries = new ObservableCollection<BasicDataset>();
+
+            InitTestEntries();
 
             DataContext = this;
         }
@@ -72,11 +74,15 @@ namespace Forecaster.Client
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            IEnumerable<string> csvLines = ReadManualDataGrid();
+            IEnumerable<string> gridContent = ReadManualDataGrid();
+
+            IEnumerable<string> csvLines = AddHeadersLine(gridContent);
 
             byte[] csvBytes = ConvertToByteArray(csvLines);
 
             OnInputReturn?.Invoke(csvBytes);
+
+            this.DialogResult = true;
 
             this.Close();
         }
@@ -87,12 +93,21 @@ namespace Forecaster.Client
 
             foreach(BasicDataset dataset in Entries)
             {
-                string csvLine = dataset.ToString();
+                string csvLine = dataset.ToString() + '\n';
 
                 csvLines.Add(csvLine);
             }
 
             return csvLines;
+        }
+
+        private IEnumerable<string> AddHeadersLine(IEnumerable<string> csvLines)
+        {
+            var csvLinesList = csvLines.ToList();
+
+            csvLinesList.Insert(0, "Date,Close\n");
+
+            return csvLinesList;
         }
 
         private byte[] ConvertToByteArray(IEnumerable<string> csvLines)
@@ -107,6 +122,22 @@ namespace Forecaster.Client
             }
 
             return csvBytes.SelectMany(a => a).ToArray();
+        }
+
+        private void InitTestEntries()
+        {
+            Random rand = new Random();
+
+            for (int i = 1; i < 31; ++i)
+            {
+                DateTime date = DateTime.Now.AddDays(i);
+
+                double close = rand.Next(10, 100);
+
+                BasicDataset dataset = new BasicDataset(date, close);
+
+                Entries.Add(dataset);
+            }
         }
     }
 }

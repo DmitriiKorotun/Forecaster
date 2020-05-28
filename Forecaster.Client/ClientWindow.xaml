@@ -18,7 +18,9 @@
             <ColumnDefinition Width="8*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="2">
-            <MenuItem Header="File"/>
+            <MenuItem Header="File">
+                <MenuItem Header="Settings"/>
+            </MenuItem>
         </Menu>
 
         <Grid Grid.Column="1" Grid.Row="1" Margin="10">
@@ -48,8 +50,9 @@
                 <RowDefinition Height="10*"></RowDefinition>
                 <RowDefinition Height="45*"></RowDefinition>
             </Grid.RowDefinitions>
-            <GroupBox Header="Chose File"   Margin="5" BorderBrush="Black" BorderThickness="1">
-                <Grid>
+            <GroupBox Name="gbox_choseFile" Header="Chose File" 
+                      Margin="5">
+                <Grid Name="grid_choseFile">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20*"></RowDefinition>
                         <RowDefinition Height="20*"></RowDefinition>
@@ -61,8 +64,9 @@
                              IsReadOnly="True" Grid.Row="1" Margin="5"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="Manual data input" Grid.Row="2" Margin="5" BorderBrush="Black" BorderThickness="1">
-                <Grid>
+            <GroupBox Name="gbox_manualInput" Header="Manual data input" Grid.Row="2"
+                      Margin="5">
+                <Grid Name="grid_manualInput">
                     <Button Name="btn_manualInput" Content="Manual input" VerticalAlignment="Center"
                             Margin="5" Click="btn_manualInput_Click"/>
                 </Grid>

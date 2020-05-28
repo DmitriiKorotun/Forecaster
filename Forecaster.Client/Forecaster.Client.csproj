@@ -129,6 +129,10 @@
       <Project>{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}</Project>
       <Name>Forecaster.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Csv\Csv.csproj">
+      <Project>{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}</Project>
+      <Name>Csv</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Forecaster\Forecaster.csproj">
       <Project>{4DF1528C-87BE-49EC-A804-F4FB2E7363C5}</Project>
       <Name>Forecaster</Name>

@@ -60,11 +60,18 @@ namespace Forecaster.Client.CSV
 
             foreach(string[] csvRow in csvContent)
             {
-                DateTime date = DateTime.Parse(csvRow[datePosition]);
+                try
+                {
+                    DateTime date = DateTime.Parse(csvRow[datePosition]);
 
-                double close = double.Parse(csvRow[closePosition], CultureInfo.InvariantCulture);
+                    double close = double.Parse(csvRow[closePosition], CultureInfo.InvariantCulture);
 
-                dateCloseDictionary.Add(date, close);
+                    dateCloseDictionary.Add(date, close);
+                }
+                catch(FormatException ex)
+                {
+
+                }
             }
 
             return dateCloseDictionary;

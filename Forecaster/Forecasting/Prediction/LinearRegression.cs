@@ -22,7 +22,7 @@ namespace Forecaster.Forecasting.Prediction
             int totalCount = datasets.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
 
             DataTable mscTable = GetTableForPrediction(datasets);
-           
+
             IEnumerable<DateTime> predictedDates = GetPredictionDates(mscTable, trainingCount, controlCount);
 
             double[] outResPositive = mscTable.Columns["Close"].ToArray(),
@@ -45,7 +45,8 @@ namespace Forecaster.Forecasting.Prediction
         {
             var ols = new OrdinaryLeastSquares()
             {
-                UseIntercept = true
+                UseIntercept = true,
+                IsRobust = true
             };
 
             MultipleLinearRegression regression = ols.Learn(inputsTrain, outResPositiveTrain);

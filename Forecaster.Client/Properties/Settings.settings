@@ -3,5 +3,18 @@
   <Profiles>
     <Profile Name="(Default)" />
   </Profiles>
-  <Settings />
+  <Settings>
+    <Setting Name="DefaultAlgorithm" Type="System.UInt16" Scope="User">
+      <Value Profile="(Default)">8</Value>
+    </Setting>
+    <Setting Name="IsShowPartOfData" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+    <Setting Name="ScopeStart" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">1/1/2000</Value>
+    </Setting>
+    <Setting Name="ScopeEnd" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">12/12/2020</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

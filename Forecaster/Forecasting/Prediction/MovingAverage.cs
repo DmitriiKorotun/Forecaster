@@ -69,15 +69,15 @@ namespace Forecaster.Forecasting.Prediction
 
                 DateTime predictedDate = controlSet.ElementAt(i).Date;
 
-                switch (predictedDate.Date.DayOfWeek)
-                {
-                    case DayOfWeek.Saturday:
-                        predictedDate = predictedDate.AddDays(2);
-                        break;
-                    case DayOfWeek.Sunday:
-                        predictedDate = predictedDate.AddDays(1);
-                        break;
-                }
+                //switch (predictedDate.Date.DayOfWeek)
+                //{
+                //    case DayOfWeek.Saturday:
+                //        predictedDate = predictedDate.AddDays(2);
+                //        break;
+                //    case DayOfWeek.Sunday:
+                //        predictedDate = predictedDate.AddDays(1);
+                //        break;
+                //}
 
                 singlePrediction = new BasicDataset(predictedDate, summ / predictionCount);
 

@@ -128,16 +128,63 @@ namespace Forecaster.Client
         {
             Random rand = new Random();
 
-            for (int i = 1; i < 31; ++i)
+            int seasonCount = 20, valuePerSeason = 15, maxValueChangePerDay = 5, maxValueChangeJumped = 10, lastSeasonValue = 50;
+
+            double enoughJumpProbability = 0.8;
+            
+            bool isGrowExpected;
+
+            for (int i = 0; i < seasonCount; ++i)
             {
-                DateTime date = DateTime.Now.AddDays(i);
+                isGrowExpected = rand.Next(0, 2) > 0 ? true : false;
 
-                double close = rand.Next(10, 100);
+                for (int j = 1; j < valuePerSeason + 1; ++j)
+                {
+                    DateTime date = DateTime.Now.AddDays(i * seasonCount + j);
 
-                BasicDataset dataset = new BasicDataset(date, close);
+                    double close, jumpProbability = rand.NextDouble();
 
-                Entries.Add(dataset);
+                    if (isGrowExpected)
+                    {
+                        if (jumpProbability > enoughJumpProbability)
+                            close = rand.Next(lastSeasonValue, lastSeasonValue + maxValueChangeJumped);
+                        else
+                            close = rand.Next(lastSeasonValue, lastSeasonValue + maxValueChangePerDay);
+                    }
+                    else
+                    {
+                        int minClose;
+
+                        if (jumpProbability > enoughJumpProbability)
+                            minClose = lastSeasonValue - maxValueChangePerDay;
+                        else
+                            minClose = lastSeasonValue - maxValueChangeJumped;
+
+                        if (minClose < 1)
+                            minClose = 1;
+
+                        close = rand.Next(minClose, lastSeasonValue);
+                    }
+
+                    BasicDataset dataset = new BasicDataset(date, close);
+
+                    Entries.Add(dataset);
+                }
+
+
+                lastSeasonValue = (int)Entries[Entries.Count - 1].Close;
             }
+
+            //for (int i = 1; i < 101; ++i)
+            //{
+            //    DateTime date = DateTime.Now.AddDays(i);
+
+            //    double close = rand.Next(10, 100);
+
+            //    BasicDataset dataset = new BasicDataset(date, close);
+
+            //    Entries.Add(dataset);
+            //}
         }
     }
 }

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Forecaster.Client"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:localization="clr-namespace:Forecaster.Client.Localization"
         mc:Ignorable="d"
         Title="Forecaster Client" Height="450" Width="800">
     <Grid>
@@ -18,8 +19,13 @@
             <ColumnDefinition Width="8*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="2">
-            <MenuItem Header="File">
-                <MenuItem Header="Settings"/>
+            <MenuItem Header="{x:Static localization:Strings.File}">
+                <MenuItem Header="{x:Static localization:Strings.Settings}"
+                          Click="MenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="{x:Static localization:Strings.Predictions}">
+                <MenuItem Header="{x:Static localization:Strings.Compare}"
+                          Click="MenuItem_Click_1"/>
             </MenuItem>
         </Menu>
 
@@ -38,9 +44,11 @@
                 <RowDefinition Height="20*"></RowDefinition>
                 <RowDefinition Height="80*"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBlock Padding="5, 0, 0, 0" TextWrapping="Wrap" Text="Output"/>
+            <TextBlock Padding="5, 0, 0, 0" TextWrapping="Wrap" 
+                       Text="{x:Static localization:Strings.Output}"/>
             <ScrollViewer Grid.Row="1">
-                <TextBlock x:Name="tbl_output" Grid.Row="1" Margin="5" TextWrapping="Wrap" Background="#FFF3F3F3"/>
+                <TextBlock x:Name="tbl_output" Grid.Row="1" Margin="5" 
+                           TextWrapping="Wrap" Background="#FFF3F3F3"/>
             </ScrollViewer>
 
         </Grid>
@@ -50,28 +58,33 @@
                 <RowDefinition Height="10*"></RowDefinition>
                 <RowDefinition Height="45*"></RowDefinition>
             </Grid.RowDefinitions>
-            <GroupBox Name="gbox_choseFile" Header="Chose File" 
-                      Margin="5">
+            <GroupBox Name="gbox_choseFile" 
+                      Header="{x:Static localization:Strings.ChoseFile}" Margin="5">
                 <Grid Name="grid_choseFile">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20*"></RowDefinition>
                         <RowDefinition Height="20*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Button Content="Chose file" VerticalAlignment="Center"
+                    <Button Content="{x:Static localization:Strings.ChoseFile}" 
+                            VerticalAlignment="Center"
                             Click="Button_Click" Margin="5"/>
                     <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv"
                              Name="tb_fileToUpload" Height="24" VerticalAlignment="Center"
                              IsReadOnly="True" Grid.Row="1" Margin="5"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Name="gbox_manualInput" Header="Manual data input" Grid.Row="2"
+            <GroupBox Name="gbox_manualInput" 
+                      Header="{x:Static localization:Strings.ManualInput}" Grid.Row="2"
                       Margin="5">
                 <Grid Name="grid_manualInput">
-                    <Button Name="btn_manualInput" Content="Manual input" VerticalAlignment="Center"
+                    <Button Name="btn_manualInput" 
+                            Content="{x:Static localization:Strings.ManualInput}" 
+                            VerticalAlignment="Center"
                             Margin="5" Click="btn_manualInput_Click"/>
                 </Grid>
             </GroupBox>
-            <Label Content="Or" Grid.Row="1" HorizontalAlignment="Center"/>
+            <Label Content="{x:Static localization:Strings.Or}" Grid.Row="1"
+                   HorizontalAlignment="Center"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
@@ -84,10 +97,12 @@
                 <ColumnDefinition Width="60*"></ColumnDefinition>
                 <ColumnDefinition Width="40*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="2" Name="btn_fillDiagramm" Content="Fill diagramm"
+            <Button Grid.Row="2" Name="btn_fillDiagramm" 
+                    Content="{x:Static localization:Strings.FillDiagramm}"
                     VerticalAlignment="Center" Margin="5, 0" 
                     Click="btn_fillDiagramm_Click"/>
-            <Button Grid.Row="2" Content="Upload" VerticalAlignment="Center" Click="Button_Click_1" 
+            <Button Grid.Row="2" Content="{x:Static localization:Strings.Upload}" 
+                    VerticalAlignment="Center" Click="Button_Click_1" 
                     Grid.Column="1" Margin="5, 0"/>
             <ComboBox Name="cb_algList" Grid.Row="1" VerticalAlignment="Center"
                       SelectedValuePath="Key" DisplayMemberPath="Value"

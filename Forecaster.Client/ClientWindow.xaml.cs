@@ -3,6 +3,7 @@ using Forecaster.Client.CSV;
 using Forecaster.Client.Drawing;
 using Forecaster.Client.Local;
 using Forecaster.Client.Network;
+using Forecaster.Client.Properties;
 using Forecaster.Net;
 using Forecaster.Net.Requests;
 using LiveCharts;
@@ -53,6 +54,8 @@ namespace Forecaster.Client
 
         private bool IsManualSelected { get; set; }
 
+        private List<Dictionary<string, string>> Predictions { get; set; }
+
         public ClientWindow()
         {
             InitializeComponent();
@@ -77,7 +80,9 @@ namespace Forecaster.Client
 
             DataContext = this;
 
-            ClientController.TransferPredictions += Test;
+            ClientController.TransferPredictions += HandlePredictions;
+
+            Predictions = new List<Dictionary<string, string>>();
         }
 
         private void InitializeClient()
@@ -92,7 +97,15 @@ namespace Forecaster.Client
             InitAlgorithmsCB();
         }
 
-        private void Test(Dictionary<string, string> restoredPredictions)
+        private void HandlePredictions(Dictionary<string, string> restoredPredictions)
+        {
+            if(!Predictions.Contains(restoredPredictions))
+                Predictions.Add(restoredPredictions);
+
+            DrawPredictions(restoredPredictions);
+        }
+
+        private void DrawPredictions(Dictionary<string, string> restoredPredictions)
         {
             var predictionsToDraw = ResponseConverter.ConvertResponsePredictions(restoredPredictions);
 
@@ -110,7 +123,7 @@ namespace Forecaster.Client
                 { (ushort)PredictionAlgorithm.AutoArima, "AutoARIMA" }
             };
             cb_algList.ItemsSource = items;
-            cb_algList.SelectedIndex = 0;
+            cb_algList.SelectedValue = (ushort)Settings.Default.DefaultAlgorithm;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -131,54 +144,54 @@ namespace Forecaster.Client
             {
                 ushort selectedAlgorithm = (ushort)cb_algList.SelectedValue;
 
-                if (DataToPredict != null)
+                if (IsManualSelected)
                 {
-                    ClientController.SendFile(DataToPredict, selectedAlgorithm, Client);
+                    if (DataToPredict != null)
+                    {
+                        ClientController.SendFile(DataToPredict, selectedAlgorithm, Client);
+                    }
+                    else
+                        MessageBox.Show(Localization.Strings.ManualDataNotEntered);
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(tb_fileToUpload.Text))
-                        throw new ArgumentException("Path to file can not be empty");
+                        throw new ArgumentException(Localization.Strings.EmptyPathFileException);
 
                     ClientController.SendFile(tb_fileToUpload.Text, selectedAlgorithm, Client);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(Localization.Strings.ServerHandleException);
             }
-            //AsynchronousClient client = new AsynchronousClient();
-
-            //client.Connect(Dns.GetHostName());
-
-            //byte[] fileBytes = File.ReadAllBytes(tb_fileToUpload.Text);
-
-            //FileTransferRequest request = new FileTransferRequest(fileBytes);
-
-            //RequestManager requestManager = new RequestManager();
-
-            //byte[] requestBytes = requestManager.CreateByteRequest(request);
-
-            //client.SendData(requestBytes);
-
         }
 
         private void btn_fillDiagramm_Click(object sender, RoutedEventArgs e)
         {
             List<string[]> csvContent;
 
-            if (DataToPredict != null)
+            if (IsManualSelected)
             {
-                csvContent = CsvReader.ReadFromBytes(DataToPredict).ToList();
+                if (DataToPredict != null)
+                {
+                    csvContent = CsvReader.ReadFromBytes(DataToPredict).ToList();
+                }
+                else
+                {
+                    MessageBox.Show(Localization.Strings.ManualDataNotEntered);
+
+                    return;
+                }
             }
             else
                 csvContent = Reader.ReadCSV(tb_fileToUpload.Text);
 
             Dictionary<DateTime, double> csvDictionary = CsvConverter.ConvertToDictionary(csvContent);
 
-            DiagrammPainter.UpdateSeries(csvDictionary);
+            Predictions.Clear();
 
-            //SetDataContext();
+            DiagrammPainter.UpdateSeries(csvDictionary);
         }
 
         private void SetSeriesLine(params Dictionary<DateTime, double>[] csvStockList)
@@ -240,6 +253,20 @@ namespace Forecaster.Client
             }
             else
                 gbox.BorderThickness = new Thickness(0);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingsWindow = new SettingsWindow();
+
+            settingsWindow.ShowDialog();
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            ResultsWindow resultsWindow = new ResultsWindow(Predictions);
+
+            resultsWindow.ShowDialog();
         }
     }
 }

@@ -4,9 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Forecaster.Client"
-        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="Forecaster.Client.ManualInputWindow"
-        mc:Ignorable="d"
-        Title="ManualInputWindow" Height="450" Width="306.968">
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:localization="clr-namespace:Forecaster.Client.Localization"
+    x:Class="Forecaster.Client.ManualInputWindow"
+        
+    mc:Ignorable="d"
+        Title="{x:Static localization:Strings.ManualInput}" Height="450" Width="306.968">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="90*"/>
@@ -20,12 +23,18 @@
                   CanUserAddRows="True" AutoGenerateColumns="False" 
                   ItemsSource="{Binding Entries}" BeginningEdit="dgrid_manualData_BeginningEdit" PreviewTextInput="dgrid_manualData_PreviewTextInput" TextInput="dgrid_manualData_TextInput">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="60*" Header="Date" Binding="{Binding Date}"/>
-                <DataGridTextColumn Width="40*" Header="Close" Binding="{Binding Close, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Width="60*" 
+                                    Header="{x:Static localization:Strings.Date}" 
+                                    Binding="{Binding Date}"/>
+                <DataGridTextColumn Width="40*" 
+                                    Header="{x:Static localization:Strings.Price}" 
+                                    Binding="{Binding Close, UpdateSourceTrigger=PropertyChanged}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Cancel" Grid.Row="1" VerticalAlignment="Center" Margin="10" Click="Button_Click"/>
-        <Button Content="Apply" Grid.Row="1" VerticalAlignment="Center" 
+        <Button Content="{x:Static localization:Strings.Cancel}" Grid.Row="1" 
+                VerticalAlignment="Center" Margin="10" Click="Button_Click"/>
+        <Button Content="{x:Static localization:Strings.Apply}" Grid.Row="1"
+                VerticalAlignment="Center" 
                 Grid.Column="1" Margin="10" Click="Button_Click_1"/>
 
     </Grid>

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Forecaster.Client"
         xmlns:localization="clr-namespace:Forecaster.Client.Localization"
         mc:Ignorable="d"
-        Title="{x:Static localization:Strings.Settings}" Height="350.41" Width="352.459">
+        Title="{x:Static localization:Strings.Settings}" Height="350.41" Width="402.459">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10*"></RowDefinition>
@@ -18,13 +18,17 @@
             <ColumnDefinition Width="10*"></ColumnDefinition>
             <ColumnDefinition Width="10*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="3" Grid.Column="1" Content="{x:Static localization:Strings.Apply}" 
-                VerticalAlignment="Center" Width="75" Click="Button_Click"/>
-        <ComboBox Name="cb_defaultAlgorithm" Margin="5" Grid.Column="1" HorizontalAlignment="Left"
-                  VerticalAlignment="Center" Width="120"
-                  SelectedValuePath="Key" DisplayMemberPath="Value"/>
-        <Button Grid.Row="3" Content="{x:Static localization:Strings.Cancel}"
-                VerticalAlignment="Center" Width="75" Click="Button_Click_1"/>
+        <Button x:Name="btn_apply" Grid.Row="3" Grid.Column="1" 
+                Content="{x:Static localization:Strings.Apply}" 
+                VerticalAlignment="Center" Width="75" Click="btn_apply_Click"/>
+        <ComboBox Name="cb_defaultAlgorithm" Margin="5" Grid.Column="1" 
+                  HorizontalAlignment="Left" VerticalAlignment="Center" Width="120"
+                  SelectedValuePath="Key" DisplayMemberPath="Value"
+                  ItemsSource="{Binding Items}" 
+                  SelectedValue="{Binding SelectedAlgorithm}"/>
+        <Button x:Name="btn_cancel"
+                Grid.Row="3" Content="{x:Static localization:Strings.Cancel}"
+                VerticalAlignment="Center" Width="75" Click="btn_cancel_Click"/>
         <Grid Grid.ColumnSpan="2" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"></RowDefinition>
@@ -38,16 +42,37 @@
             </Grid.ColumnDefinitions>
             <RadioButton Name="rb_showAll"  Grid.ColumnSpan="2" GroupName="DataPeriod" 
                          Content="{x:Static localization:Strings.ShowAllData}"
-                     HorizontalAlignment="Center" VerticalAlignment="Center" Checked="rb_showAll_Checked"/>
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         IsChecked="{Binding IsAllChartSelected}"/>
+
             <RadioButton Name="rb_showPart" Grid.ColumnSpan="2" Grid.Column="2" 
-                         GroupName="DataPeriod" Checked="rb_showPart_Checked"
+                         GroupName="DataPeriod"
                          Content="{x:Static localization:Strings.ShowDataPeriod}"
-                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <DatePicker x:Name="calendar_from" SelectedDate="{Binding ScopeStart}" Grid.Column="1"
-                        Grid.Row="1" HorizontalAlignment="Left"
-                    VerticalAlignment="Center" SelectedDateChanged="calendar_from_SelectedDateChanged"/>
-            <DatePicker x:Name="calendar_to" SelectedDate="{Binding ScopeEnd}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left"
-                    VerticalAlignment="Center" SelectedDateChanged="calendar_to_SelectedDateChanged"/>
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         IsChecked="{Binding IsChartPeriodSelected}"/>
+
+            <DatePicker x:Name="calendar_from" SelectedDate="{Binding ScopeStart}"
+                        DisplayDateEnd="{Binding DisplayDateEndFrom, Mode=OneWay}"
+                        Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                <DatePicker.Resources>
+                    <Style TargetType="DatePickerTextBox">
+                        <Setter Property="IsReadOnly" Value="True"/>
+                    </Style>
+                </DatePicker.Resources>
+            </DatePicker>
+
+            <DatePicker x:Name="calendar_to" SelectedDate="{Binding ScopeEnd}"
+                        DisplayDateStart="{Binding DisplayDateStartTo, Mode=OneWay}"
+                        Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                <DatePicker.Resources>
+                    <Style TargetType="DatePickerTextBox">
+                        <Setter Property="IsReadOnly" Value="True"/>
+                    </Style>
+                </DatePicker.Resources>
+            </DatePicker>
+
             <Label Margin="5" Content="{x:Static localization:Strings.From}" 
                    HorizontalAlignment="Left" Grid.Row="1"
                    VerticalAlignment="Center" Grid.ColumnSpan="2"/>
@@ -57,6 +82,5 @@
         </Grid>
         <Label Content="{x:Static localization:Strings.DefaultAlgorithm}" 
                HorizontalAlignment="Left" VerticalAlignment="Center"/>
-
     </Grid>
 </Window>

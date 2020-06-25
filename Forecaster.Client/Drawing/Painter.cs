@@ -79,7 +79,7 @@ namespace Forecaster.Client.Drawing
 
         public void SetAxisLimit()
         {
-            if (Settings.Default.IsShowPartOfData)
+            if (Settings.Default.IsShowChartPeriod)
             {
                 MinX = Settings.Default.ScopeStart.Ticks / TimeSpan.FromDays(1).Ticks;
                 MaxX = Settings.Default.ScopeEnd.Ticks / TimeSpan.FromDays(1).Ticks;

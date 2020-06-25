@@ -123,7 +123,7 @@ namespace Forecaster.Client
                 { (ushort)PredictionAlgorithm.AutoArima, "AutoARIMA" }
             };
             cb_algList.ItemsSource = items;
-            cb_algList.SelectedValue = (ushort)Settings.Default.DefaultAlgorithm;
+            cb_algList.SelectedValue = (ushort)Settings.Default.SelectedAlgorithm;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

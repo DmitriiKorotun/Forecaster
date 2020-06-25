@@ -96,6 +96,8 @@
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="StateObject.cs" />
+    <Compile Include="ViewModels\BasicViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Page Include="ClientWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

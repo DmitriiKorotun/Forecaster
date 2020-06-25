@@ -138,6 +138,9 @@
   <data name="DefaultAlgorithm" xml:space="preserve">
     <value>Default algorithm</value>
   </data>
+  <data name="DiagrammFillException" xml:space="preserve">
+    <value>Error while trying to fill diagramm</value>
+  </data>
   <data name="EmptyPathFileException" xml:space="preserve">
     <value>Path to file can't be empty</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="From" xml:space="preserve">
     <value>From</value>
+  </data>
+  <data name="InvalidDateBounds" xml:space="preserve">
+    <value>Invalid date bounds</value>
   </data>
   <data name="ManualDataNotEntered" xml:space="preserve">
     <value>You didn't input data</value>
@@ -165,6 +171,9 @@
   <data name="Predictions" xml:space="preserve">
     <value>Predictions</value>
   </data>
+  <data name="PredictionsToCompareIsEmpty" xml:space="preserve">
+    <value>Cannot compare because predictions weren't made</value>
+  </data>
   <data name="Price" xml:space="preserve">
     <value>Price</value>
   </data>
@@ -176,6 +185,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="SaveSettingsError" xml:space="preserve">
+    <value>Error occured while trying to save settings</value>
   </data>
   <data name="ServerHandleException" xml:space="preserve">
     <value>Error while upload to server or server-handle error</value>

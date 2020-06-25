@@ -43,7 +43,7 @@ namespace Csv
             return converted;
         }
 
-        public static Dictionary<string, int> GetHeadersPosition(string[] csvHeaders, string[] headersToSearch)
+        public static Dictionary<string, int> GetHeadersPosition(string[] csvHeaders, string[] headersToSearch, bool isRegisterIgnored = true)
         {
             Dictionary<string, int> headersPosition = new Dictionary<string, int>(headersToSearch.Length);
 
@@ -53,9 +53,11 @@ namespace Csv
             {
                 foreach (string headerToSearch in headersToSearch)
                 {
-                    if (header == headerToSearch)
+                    bool isHeadersEqual = isRegisterIgnored ? header.ToLower() == headerToSearch.ToLower() : header == headerToSearch;
+
+                    if (isHeadersEqual)
                     {
-                        AddHeader(headersPosition, header, position);
+                        AddHeader(headersPosition, headerToSearch, position);
 
                         break;
                     }

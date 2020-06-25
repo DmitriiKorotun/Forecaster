@@ -208,6 +208,8 @@ namespace Forecaster.Server
                 Console.WriteLine("Sent {0} bytes to client.", bytesSent);
 
                 ShutdownSocket(handler);
+
+                
             }
             catch (Exception e)
             {
@@ -219,6 +221,8 @@ namespace Forecaster.Server
         {
             handler.Shutdown(SocketShutdown.Both);
             handler.Close();
+
+            Console.WriteLine("Connection closed");
         }
     }
 }

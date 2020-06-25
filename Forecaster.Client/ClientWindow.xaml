@@ -11,8 +11,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"></RowDefinition>
-            <RowDefinition Height="70*"></RowDefinition>
-            <RowDefinition Height="20*"></RowDefinition>
+            <RowDefinition Height="60*"></RowDefinition>
+            <RowDefinition Height="25*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
@@ -32,7 +32,10 @@
         <Grid Grid.Column="1" Grid.Row="1" Margin="10">
             <lvc:CartesianChart Series="{Binding DiagrammPainter.Series}">
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis LabelFormatter="{Binding Path=DiagrammPainter.Formatter}"></lvc:Axis>
+                    <lvc:Axis LabelFormatter="{Binding Path=DiagrammPainter.Formatter}"
+                              MinValue="{Binding Path=DiagrammPainter.MinX, Mode=TwoWay}"
+                              MaxValue="{Binding Path=DiagrammPainter.MaxX, Mode=TwoWay}">
+                    </lvc:Axis>
                 </lvc:CartesianChart.AxisX>
             </lvc:CartesianChart>
         </Grid>
@@ -88,23 +91,18 @@
         </Grid>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="4*"></RowDefinition>
                 <RowDefinition Height="10*"></RowDefinition>
                 <RowDefinition Height="10*"></RowDefinition>
-                <RowDefinition Height="4*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60*"></ColumnDefinition>
-                <ColumnDefinition Width="40*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Button Grid.Row="2" Name="btn_fillDiagramm" 
+            <Button Name="btn_fillDiagramm" 
                     Content="{x:Static localization:Strings.FillDiagramm}"
                     VerticalAlignment="Center" Margin="5, 0" 
                     Click="btn_fillDiagramm_Click"/>
             <Button Grid.Row="2" Content="{x:Static localization:Strings.Upload}" 
                     VerticalAlignment="Center" Click="Button_Click_1" 
                     Grid.Column="1" Margin="5, 0"/>
-            <ComboBox Name="cb_algList" Grid.Row="1" VerticalAlignment="Center"
+            <ComboBox Grid.Row="1" Name="cb_algList" VerticalAlignment="Center"
                       SelectedValuePath="Key" DisplayMemberPath="Value"
                       Margin="5, 0" Grid.ColumnSpan="2"/>
         </Grid>

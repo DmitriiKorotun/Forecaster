@@ -30,12 +30,12 @@ namespace Forecaster.Client.CSV
 
             foreach (string csvHeader in csvHeaders)
             {
-                switch (csvHeader)
+                switch (csvHeader.ToLower())
                 {
-                    case "Date":
+                    case "date":
                         datePosition = currentHeaderPos;
                         break;
-                    case "Close":
+                    case "close":
                         closePosition = currentHeaderPos;
                         break;
                 }

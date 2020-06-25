@@ -171,27 +171,34 @@ namespace Forecaster.Client
         {
             List<string[]> csvContent;
 
-            if (IsManualSelected)
+            try
             {
-                if (DataToPredict != null)
+                if (IsManualSelected)
                 {
-                    csvContent = CsvReader.ReadFromBytes(DataToPredict).ToList();
+                    if (DataToPredict != null)
+                    {
+                        csvContent = CsvReader.ReadFromBytes(DataToPredict).ToList();
+                    }
+                    else
+                    {
+                        MessageBox.Show(Localization.Strings.ManualDataNotEntered);
+
+                        return;
+                    }
                 }
                 else
-                {
-                    MessageBox.Show(Localization.Strings.ManualDataNotEntered);
+                    csvContent = Reader.ReadCSV(tb_fileToUpload.Text);
 
-                    return;
-                }
+                Dictionary<DateTime, double> csvDictionary = CsvConverter.ConvertToDictionary(csvContent);
+
+                Predictions.Clear();
+
+                DiagrammPainter.UpdateSeries(csvDictionary);
             }
-            else
-                csvContent = Reader.ReadCSV(tb_fileToUpload.Text);
-
-            Dictionary<DateTime, double> csvDictionary = CsvConverter.ConvertToDictionary(csvContent);
-
-            Predictions.Clear();
-
-            DiagrammPainter.UpdateSeries(csvDictionary);
+            catch
+            {
+                MessageBox.Show(Localization.Strings.DiagrammFillException);
+            }
         }
 
         private void SetSeriesLine(params Dictionary<DateTime, double>[] csvStockList)
@@ -259,14 +266,21 @@ namespace Forecaster.Client
         {
             SettingsWindow settingsWindow = new SettingsWindow();
 
+            settingsWindow.OnChartBordersChanged += DiagrammPainter.SetAxisLimit;
+
             settingsWindow.ShowDialog();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
-            ResultsWindow resultsWindow = new ResultsWindow(Predictions);
+            if (Predictions.Count < 1)
+                MessageBox.Show(Localization.Strings.PredictionsToCompareIsEmpty);
+            else
+            {
+                ResultsWindow resultsWindow = new ResultsWindow(Predictions);
 
-            resultsWindow.ShowDialog();
+                resultsWindow.ShowDialog();
+            }
         }
     }
 }

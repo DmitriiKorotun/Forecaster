@@ -138,6 +138,9 @@
   <data name="DefaultAlgorithm" xml:space="preserve">
     <value>Алгоритм по-умолчанию</value>
   </data>
+  <data name="DiagrammFillException" xml:space="preserve">
+    <value>Ошибка при попытке построить график</value>
+  </data>
   <data name="EmptyPathFileException" xml:space="preserve">
     <value>Путь к файлу не может быть пустым</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="From" xml:space="preserve">
     <value>С</value>
+  </data>
+  <data name="InvalidDateBounds" xml:space="preserve">
+    <value>Указан некорректный диапазон даты</value>
   </data>
   <data name="ManualDataNotEntered" xml:space="preserve">
     <value>Вы не ввели данные</value>
@@ -165,6 +171,9 @@
   <data name="Predictions" xml:space="preserve">
     <value>Предсказания</value>
   </data>
+  <data name="PredictionsToCompareIsEmpty" xml:space="preserve">
+    <value>Нельзя сравнить предсказания, так как Вы не получили ещё ни одно из них</value>
+  </data>
   <data name="Price" xml:space="preserve">
     <value>Цена</value>
   </data>
@@ -176,6 +185,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Сохранить</value>
+  </data>
+  <data name="SaveSettingsError" xml:space="preserve">
+    <value>При сохранении настроек произошла ошибка</value>
   </data>
   <data name="ServerHandleException" xml:space="preserve">
     <value>Ошибка при подключении к серверу или ошибка при обработке данных сервером</value>

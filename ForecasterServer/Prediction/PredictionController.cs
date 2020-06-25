@@ -1,4 +1,5 @@
-﻿using Csv;
+﻿using Accord;
+using Csv;
 using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Net;
@@ -28,6 +29,13 @@ namespace Forecaster.Server.Prediction
             return Predict(csvData, predictionAlgorithm);
         }
 
+        public static IEnumerable<BasicDataset> Predict(string pathToCSV, IPredictionAlgorithm predictionAlgorithm, out IEnumerable<BasicDataset> datasets)
+        {
+            List<string[]> csvData = ReadCSV(pathToCSV);
+
+            return Predict(csvData, predictionAlgorithm, out datasets);
+        }
+
 
         public static IEnumerable<BasicDataset> Predict(byte[] fileBytes, IPredictionAlgorithm predictionAlgorithm)
         {
@@ -43,6 +51,15 @@ namespace Forecaster.Server.Prediction
             List<BasicDataset> stockList = datasetCreator.CreateFromCsv(csvData).ToList();
 
             return Predict(stockList, predictionAlgorithm);
+        }
+
+        private static IEnumerable<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm, out IEnumerable<BasicDataset> datasets)
+        {
+            DatasetCreator datasetCreator = new DatasetCreator();
+
+            datasets = datasetCreator.CreateFromCsv(csvData).ToList();
+
+            return Predict(datasets.ToList(), predictionAlgorithm);
         }
 
         private static List<BasicDataset> OrderSet(List<BasicDataset> dataset, bool isAscending = true)

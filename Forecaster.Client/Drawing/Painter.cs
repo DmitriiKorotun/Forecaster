@@ -1,18 +1,34 @@
-﻿using LiveCharts;
+﻿using Forecaster.Client.Properties;
+using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Forecaster.Client.Drawing
 {
-    public class Painter
+    public class Painter : INotifyPropertyChanged
     {
         public SeriesCollection Series { get; set; }
         public Func<double, string> Formatter { get; set; }
+
+        private double minX;
+        private double maxX;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public double MinX { get { return minX; } set { minX = value; OnPropertyChanged("MinX"); } }
+        public double MaxX { get { return maxX; } set { maxX = value; OnPropertyChanged("MaxX"); } }
 
         private CartesianMapper<DateModel> Mapper { get; set; }
 
@@ -23,6 +39,8 @@ namespace Forecaster.Client.Drawing
             Series = new SeriesCollection(Mapper);
           
             Formatter = FormatterManager.CreateFormatter();
+
+            SetAxisLimit();
         }
 
         public Painter(SeriesCollection series)
@@ -32,6 +50,8 @@ namespace Forecaster.Client.Drawing
             Mapper = Mappers.Xy<DateModel>().X(dateModel => dateModel.Date.Ticks / TimeSpan.FromDays(1).Ticks).Y(dateModel => dateModel.Value);
 
             Formatter = FormatterManager.CreateFormatter();
+
+            SetAxisLimit();
         }
 
         public void AddLine(LineSeries line)
@@ -55,6 +75,20 @@ namespace Forecaster.Client.Drawing
 
             foreach (LineSeries newLineSeries in newLineSeriesRange)
                 Series.Add(newLineSeries);
+        }
+
+        public void SetAxisLimit()
+        {
+            if (Settings.Default.IsShowPartOfData)
+            {
+                MinX = Settings.Default.ScopeStart.Ticks / TimeSpan.FromDays(1).Ticks;
+                MaxX = Settings.Default.ScopeEnd.Ticks / TimeSpan.FromDays(1).Ticks;
+            }
+            else
+            {
+                MinX = double.NaN;
+                MaxX = double.NaN;
+            }
         }
     }
 }

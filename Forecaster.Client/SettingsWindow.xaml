@@ -43,11 +43,11 @@
                          GroupName="DataPeriod" Checked="rb_showPart_Checked"
                          Content="{x:Static localization:Strings.ShowDataPeriod}"
                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <DatePicker SelectedDate="{Binding ScopeStart}" Grid.Column="1"
+            <DatePicker x:Name="calendar_from" SelectedDate="{Binding ScopeStart}" Grid.Column="1"
                         Grid.Row="1" HorizontalAlignment="Left"
-                    VerticalAlignment="Center"/>
-            <DatePicker SelectedDate="{Binding ScopeEnd}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left"
-                    VerticalAlignment="Center"/>
+                    VerticalAlignment="Center" SelectedDateChanged="calendar_from_SelectedDateChanged"/>
+            <DatePicker x:Name="calendar_to" SelectedDate="{Binding ScopeEnd}" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left"
+                    VerticalAlignment="Center" SelectedDateChanged="calendar_to_SelectedDateChanged"/>
             <Label Margin="5" Content="{x:Static localization:Strings.From}" 
                    HorizontalAlignment="Left" Grid.Row="1"
                    VerticalAlignment="Center" Grid.ColumnSpan="2"/>

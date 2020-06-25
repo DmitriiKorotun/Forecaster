@@ -124,6 +124,15 @@ namespace Forecaster.Client.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Error while trying to fill diagramm.
+        /// </summary>
+        public static string DiagrammFillException {
+            get {
+                return ResourceManager.GetString("DiagrammFillException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Path to file can&apos;t be empty.
         /// </summary>
         public static string EmptyPathFileException {
@@ -156,6 +165,15 @@ namespace Forecaster.Client.Localization {
         public static string From {
             get {
                 return ResourceManager.GetString("From", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid date bounds.
+        /// </summary>
+        public static string InvalidDateBounds {
+            get {
+                return ResourceManager.GetString("InvalidDateBounds", resourceCulture);
             }
         }
         
@@ -205,6 +223,15 @@ namespace Forecaster.Client.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Cannot compare because predictions weren&apos;t made.
+        /// </summary>
+        public static string PredictionsToCompareIsEmpty {
+            get {
+                return ResourceManager.GetString("PredictionsToCompareIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Price.
         /// </summary>
         public static string Price {
@@ -237,6 +264,15 @@ namespace Forecaster.Client.Localization {
         public static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Error occured while trying to save settings.
+        /// </summary>
+        public static string SaveSettingsError {
+            get {
+                return ResourceManager.GetString("SaveSettingsError", resourceCulture);
             }
         }
         

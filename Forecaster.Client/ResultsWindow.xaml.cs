@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,8 +67,11 @@ namespace Forecaster.Client
 
             predictionGrid.SetValue(Grid.ColumnSpanProperty, 2);
 
-            AddButtonToControlBlock(resultBlock, Localization.Strings.Save, 1, 0);
-            AddButtonToControlBlock(resultBlock, Localization.Strings.Remove, 1, 1);
+            Button btn_Save = AddButtonToControlBlock(resultBlock, Localization.Strings.Save, 1, 0);
+            Button btn_Remove = AddButtonToControlBlock(resultBlock, Localization.Strings.Remove, 1, 1);
+
+            btn_Remove.Click += btn_remove_Click;
+            btn_Save.Click += btn_save_Click;
 
             grid.Children.Add(resultBlock);
 
@@ -120,7 +126,7 @@ namespace Forecaster.Client
             grid.RowDefinitions.Add(row);
         }
 
-        private void AddButtonToControlBlock(Grid controlBlock, string header, int row, int column)
+        private Button AddButtonToControlBlock(Grid controlBlock, string header, int row, int column)
         {
             Button btn = new Button
             {
@@ -135,11 +141,79 @@ namespace Forecaster.Client
 
             btn.SetValue(Grid.RowProperty, row);
             btn.SetValue(Grid.ColumnProperty, column);
+
+            return btn;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void btn_remove_Click(object sender, RoutedEventArgs e)
+        {
+            var btn_remove = (Button)sender;
+
+            var parentGrid = (Grid)btn_remove.Parent;
+
+            var windowGrid = (Grid)parentGrid.Parent;
+
+            var columnNum = (int)parentGrid.GetValue(Grid.ColumnProperty);
+
+            windowGrid.Children.Remove(parentGrid);
+
+            if (windowGrid.ColumnDefinitions.Count > 1)
+            {
+                windowGrid.ColumnDefinitions[columnNum].SetValue(ColumnDefinition.WidthProperty, new GridLength(0, GridUnitType.Star));
+
+                bool isAllColumnsHidden = true;
+
+                foreach (ColumnDefinition column in windowGrid.ColumnDefinitions)
+                    if (column.Width.Value > 0)
+                        isAllColumnsHidden = false;
+
+                if(isAllColumnsHidden)
+                    this.Close();
+            }
+            else
+                this.Close();
+        }
+
+        private void btn_save_Click(object sender, RoutedEventArgs e)
+        {
+            var btn_remove = (Button)sender;
+
+            var parentGrid = (Grid)btn_remove.Parent;
+
+            var windowGrid = (DataGrid)parentGrid.Children[0];
+
+            var content = ConvertToCsv(windowGrid.Items);
+
+            SaveContent(content);
+        }
+
+        private string ConvertToCsv(ItemCollection dataGridItems)
+        {
+            string content = "Date,Close\n";
+
+            foreach (object item in dataGridItems)
+            {
+                var dict = (KeyValuePair<string, string>)item;
+
+                content += dict.Key.ToString() + ',' + (double.Parse(dict.Value)).ToString(CultureInfo.InvariantCulture) + '\n';
+            }
+
+            return content;
+        }
+
+        private void SaveContent(string content)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            if(saveFileDialog.ShowDialog() == true)
+            {
+                File.WriteAllText(saveFileDialog.FileName, content);
+            }
         }
     }
 }

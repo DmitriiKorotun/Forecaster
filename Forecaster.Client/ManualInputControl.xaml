@@ -1,17 +1,13 @@
-﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Forecaster.Client"
-        xmlns:System="clr-namespace:System;assembly=mscorlib"
-        xmlns:localization="clr-namespace:Forecaster.Client.Localization"
-        xmlns:xc="clr-namespace:Forecaster.Client.MVVM.Entities"
-        xc:DialogCloser.DialogResult="{Binding DialogResult}"
-        x:Class="Forecaster.Client.ManualInputWindow"
-        
-    mc:Ignorable="d"
-        Title="{x:Static localization:Strings.ManualInput}" Height="450" Width="306.968">
+﻿<UserControl x:Class="Forecaster.Client.ManualInputControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Forecaster.Client"
+             xmlns:localization="clr-namespace:Forecaster.Client.Localization"
+             mc:Ignorable="d"
+             Width="306"
+             Height="450">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="90*"/>
@@ -35,10 +31,10 @@
         </DataGrid>
         <Button x:Name="btn_cancel" Content="{x:Static localization:Strings.Cancel}" 
                 Grid.Row="1" VerticalAlignment="Center" Margin="10" 
-                Click="btn_cancel_Click"/>
+                Command="{Binding CloseCommand}"/>
         <Button x:Name="btn_apply" Content="{x:Static localization:Strings.Apply}" 
                 Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
-                Margin="10" Click="btn_apply_Click"/>
+                Margin="10" Command="{Binding ApplyCommand}"/>
 
     </Grid>
-</Window>
+</UserControl>

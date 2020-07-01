@@ -1,5 +1,5 @@
-﻿using Forecaster.Client.Properties;
-using Forecaster.Client.ViewModels;
+﻿using Forecaster.Client.MVVM.ViewModels;
+using Forecaster.Client.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static Forecaster.Client.ClientWindow;
 
 namespace Forecaster.Client
 {

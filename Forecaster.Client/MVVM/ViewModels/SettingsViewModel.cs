@@ -1,15 +1,16 @@
-﻿using Forecaster.Client.Properties;
+﻿using Forecaster.Client.MVVM.Entities;
+using Forecaster.Client.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Forecaster.Client.ClientWindow;
+using System.Windows.Input;
 
-namespace Forecaster.Client.ViewModels
+namespace Forecaster.Client.MVVM.ViewModels
 {
-    class SettingsViewModel : BasicViewModel
+    class SettingsViewModel : CloseableViewModel
     {
         public bool IsAllChartSelected
         {
@@ -71,11 +72,37 @@ namespace Forecaster.Client.ViewModels
             }
         }
 
-        public Dictionary<ushort, string> Items { get; set; } = new Dictionary<ushort, string> {
+        public Dictionary<ushort, string> Algorithms { get; } = new Dictionary<ushort, string> {
                 { (ushort)PredictionAlgorithm.MovingAverage, "Moving Average" },
                 { (ushort)PredictionAlgorithm.LinearRegression, "Linear Regression" },
                 { (ushort)PredictionAlgorithm.KNearest, "KNearestNeighbours" },
                 { (ushort)PredictionAlgorithm.AutoArima, "AutoARIMA" }
             };
+
+        public ICommand CancelCommand { get; private set; }
+        public ICommand ApplyCommand { get; private set; }
+
+        public SettingsViewModel()
+        {
+            InitCommands();
+        }
+
+        private void InitCommands()
+        {
+            ApplyCommand = new RelayCommand(Apply);
+            CancelCommand = new RelayCommand(Cancel);
+        }
+
+        private void Apply()
+        {
+            Settings.Default.Save();
+
+            OnClosingRequest();
+        }
+
+        private void Cancel()
+        {
+            OnClosingRequest();
+        }
     }
 }

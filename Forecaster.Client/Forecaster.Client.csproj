@@ -86,18 +86,34 @@
     <Compile Include="ManualInputWindow.xaml.cs">
       <DependentUpon>ManualInputWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MVVM\Entities\DialogCloser.cs" />
+    <Compile Include="MVVM\Entities\RelayCommand.cs" />
+    <Compile Include="MVVM\Entities\RelayCommand4.cs" />
+    <Compile Include="MVVM\IO\Win32IO.cs" />
+    <Compile Include="MVVM\IO\IOService.cs" />
+    <Compile Include="MVVM\Navigation\Mediator.cs" />
+    <Compile Include="MVVM\Navigation\WindowService.cs" />
+    <Compile Include="MVVM\ViewModels\ClientWindowViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\CloseableViewModel.cs" />
     <Compile Include="Network\ClientExceptionHandler.cs" />
     <Compile Include="Network\ExceptionReportEventArgs.cs" />
     <Compile Include="Network\ClientController.cs" />
     <Compile Include="ResultsWindow.xaml.cs">
       <DependentUpon>ResultsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsControl.xaml.cs">
+      <DependentUpon>SettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="StateObject.cs" />
-    <Compile Include="ViewModels\BasicViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\BasicViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\ManualInputViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ManualInputControl.xaml.cs">
+      <DependentUpon>ManualInputControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="ClientWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -118,7 +134,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ManualInputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

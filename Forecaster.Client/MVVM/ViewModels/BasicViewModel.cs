@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Forecaster.Client.ViewModels
+namespace Forecaster.Client.MVVM.ViewModels
 {
-    class BasicViewModel : INotifyPropertyChanged
+    public abstract class BasicViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")

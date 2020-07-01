@@ -21,7 +21,7 @@
         <Menu Grid.ColumnSpan="2">
             <MenuItem Header="{x:Static localization:Strings.File}">
                 <MenuItem Header="{x:Static localization:Strings.Settings}"
-                          Click="MenuItem_Click"/>
+                          Command="{Binding OpenSettingsWindowCommand}"/>
             </MenuItem>
             <MenuItem Header="{x:Static localization:Strings.Predictions}">
                 <MenuItem Header="{x:Static localization:Strings.Compare}"
@@ -39,8 +39,6 @@
                 </lvc:CartesianChart.AxisX>
             </lvc:CartesianChart>
         </Grid>
-
-        <Grid HorizontalAlignment="Left" Width="100"/>
 
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.RowDefinitions>
@@ -62,7 +60,9 @@
                 <RowDefinition Height="45*"></RowDefinition>
             </Grid.RowDefinitions>
             <GroupBox Name="gbox_choseFile" 
-                      Header="{x:Static localization:Strings.ChoseFile}" Margin="5">
+                      Header="{x:Static localization:Strings.ChoseFile}" Margin="5"
+                      BorderBrush="Black" 
+                      BorderThickness="{Binding InputGroupBoxesVisual.FileBorderThickness}">
                 <Grid Name="grid_choseFile">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20*"></RowDefinition>
@@ -70,20 +70,21 @@
                     </Grid.RowDefinitions>
                     <Button Content="{x:Static localization:Strings.ChoseFile}" 
                             VerticalAlignment="Center"
-                            Click="Button_Click" Margin="5"/>
-                    <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv"
+                            Command="{Binding ChoseStockFileCommand}" Margin="5"/>
+                    <TextBox Text="{Binding PathToStockFile}"
                              Name="tb_fileToUpload" Height="24" VerticalAlignment="Center"
                              IsReadOnly="True" Grid.Row="1" Margin="5"/>
                 </Grid>
             </GroupBox>
             <GroupBox Name="gbox_manualInput" 
                       Header="{x:Static localization:Strings.ManualInput}" Grid.Row="2"
-                      Margin="5">
+                      Margin="5" BorderBrush="Black" 
+                      BorderThickness="{Binding InputGroupBoxesVisual.ManualBorderThickness}">
                 <Grid Name="grid_manualInput">
                     <Button Name="btn_manualInput" 
                             Content="{x:Static localization:Strings.ManualInput}" 
                             VerticalAlignment="Center"
-                            Margin="5" Click="btn_manualInput_Click"/>
+                            Margin="5" Command="{Binding OpenManualInputWindowCommand}"/>
                 </Grid>
             </GroupBox>
             <Label Content="{x:Static localization:Strings.Or}" Grid.Row="1"
@@ -98,12 +99,14 @@
             <Button Name="btn_fillDiagramm" 
                     Content="{x:Static localization:Strings.FillDiagramm}"
                     VerticalAlignment="Center" Margin="5, 0" 
-                    Click="btn_fillDiagramm_Click"/>
+                    Command="{Binding BuildChartCommand}"/>
             <Button Grid.Row="2" Content="{x:Static localization:Strings.Upload}" 
                     VerticalAlignment="Center" Click="Button_Click_1" 
                     Grid.Column="1" Margin="5, 0"/>
             <ComboBox Grid.Row="1" Name="cb_algList" VerticalAlignment="Center"
                       SelectedValuePath="Key" DisplayMemberPath="Value"
+                      ItemsSource="{Binding Algorithms}"
+                      SelectedValue="{Binding SelectedAlgorithm}"
                       Margin="5, 0" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>

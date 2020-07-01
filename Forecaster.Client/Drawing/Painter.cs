@@ -40,7 +40,7 @@ namespace Forecaster.Client.Drawing
           
             Formatter = FormatterManager.CreateFormatter();
 
-            SetAxisLimit();
+            UpdateAxisLimit();
         }
 
         public Painter(SeriesCollection series)
@@ -51,7 +51,7 @@ namespace Forecaster.Client.Drawing
 
             Formatter = FormatterManager.CreateFormatter();
 
-            SetAxisLimit();
+            UpdateAxisLimit();
         }
 
         public void AddLine(LineSeries line)
@@ -77,7 +77,7 @@ namespace Forecaster.Client.Drawing
                 Series.Add(newLineSeries);
         }
 
-        public void SetAxisLimit()
+        public void UpdateAxisLimit()
         {
             if (Settings.Default.IsShowChartPeriod)
             {

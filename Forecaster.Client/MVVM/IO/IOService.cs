@@ -9,5 +9,6 @@ namespace Forecaster.Client.MVVM.IO
     interface IOService
     {
         string OpenFileDialog(string defaultPath);
+        void SaveFileDialog(string content, string defaultName);
     }
 }

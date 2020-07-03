@@ -242,11 +242,11 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         private void ChoseStockFile()
         {
-            PathToStockFile = IoService.OpenFileDialog(defaultPathToStockFile);
+            string selectedPath = IoService.OpenFileDialog(defaultPathToStockFile);
 
-            if (string.IsNullOrEmpty(PathToStockFile))
+            if (!string.IsNullOrEmpty(selectedPath))
             {
-                PathToStockFile = string.Empty;
+                PathToStockFile = selectedPath;
             }
             else
                 IsManualSelected = false;

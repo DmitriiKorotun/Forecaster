@@ -10,10 +10,10 @@
     <Grid Background="White">
         <Grid x:Name="comparsionGrid2">
             <ScrollViewer x:Name="comparsionScroller"
-                HorizontalScrollBarVisibility="Visible" 
-                VerticalScrollBarVisibility="Hidden">
+                HorizontalScrollBarVisibility="Auto" 
+                VerticalScrollBarVisibility="Disabled">
                 <!--<Grid>-->
-                <ItemsControl ItemsSource="{Binding Data}"
+                <ItemsControl ItemsSource="{Binding PredictionItems}"
                               Height="{Binding ElementName=comparsionScroller, Path=ActualHeight}"
                               Margin="10, 0">
                     <ItemsControl.ItemTemplate>
@@ -32,20 +32,22 @@
 
 
                                 <DataGrid ItemsSource="{Binding Predictions}"
-                                              Grid.ColumnSpan="2"/>
+                                          Grid.ColumnSpan="2"/>
 
 
                                 <Button Content="{x:Static localization:Strings.Save}"
-                                            Command="{Binding DataContext.Command1, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Grid.Row="1" Margin="10"
-                                            Width="75" Height="25"/>
+                                        Command="{Binding DataContext.SaveItemResultCommand,
+                                        RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Grid.Row="1" Margin="10"
+                                        Width="75" Height="25"/>
 
                                 <Button Content="{x:Static localization:Strings.Remove}" 
-                                            Command="{Binding DataContext.Command2, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Grid.Row="1" Grid.Column="1" Margin="10"
-                                            Width="75" Height="25"/>
+                                        Command="{Binding DataContext.RemoveItemCommand,
+                                        RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Grid.Row="1" Grid.Column="1" Margin="10"
+                                        Width="75" Height="25"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -83,9 +83,6 @@
     <Compile Include="Local\Reader.cs" />
     <Compile Include="Local\Writer.cs" />
     <Compile Include="Logging\RamLogger.cs" />
-    <Compile Include="ManualInputWindow.xaml.cs">
-      <DependentUpon>ManualInputWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MVVM\Entities\ComparsionItemControlData.cs" />
     <Compile Include="MVVM\Entities\DialogCloser.cs" />
     <Compile Include="MVVM\Entities\RelayCommand.cs" />
@@ -104,14 +101,8 @@
     <Compile Include="PredictionsComparsionControl.xaml.cs">
       <DependentUpon>PredictionsComparsionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ResultsWindow.xaml.cs">
-      <DependentUpon>ResultsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SettingsWindow.xaml.cs">
-      <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="StateObject.cs" />
     <Compile Include="MVVM\ViewModels\BasicViewModel.cs" />
@@ -132,23 +123,11 @@
       <DependentUpon>ClientWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ManualInputWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="PredictionsComparsionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ResultsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

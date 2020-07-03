@@ -84,7 +84,7 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         public InputGBoxesVisual InputGroupBoxesVisual { get; set; }
 
-        private byte[] DataToPredict { get; set; }
+        private byte[] StockCsvData { get; set; }
 
         private bool IsManualSelected { get; set; }
 
@@ -103,7 +103,7 @@ namespace Forecaster.Client.MVVM.ViewModels
             } 
         }
 
-        private const string defaultPathToStockFile = "C:/Users/korot/source/repos/Forecaster/Forecaster.Client/bin/Debug/fortests/XTSE-AAB.csv";
+        private const string defaultPathToStockFile = "C:/Users/korot/source/repos/Forecaster/ForecasterServer/bin/Debug/fortests/NSE-TATAGLOBAL11.csv";
 
         private string pathToStockFile = defaultPathToStockFile;
         public string PathToStockFile 
@@ -116,15 +116,14 @@ namespace Forecaster.Client.MVVM.ViewModels
             } 
         }
 
-        private byte[] CsvBytes { get; set; }
-
         private IOService IoService { get; set; }
-
-
-        public ICommand BuildChartCommand { get; private set; }
+     
         public ICommand OpenManualInputWindowCommand { get; private set; }
         public ICommand OpenSettingsWindowCommand { get; private set; }
+        public ICommand OpenPredictionsComparsionWindowCommand { get; private set; }
+        public ICommand BuildChartCommand { get; private set; }
         public ICommand ChoseStockFileCommand { get; private set; }
+        public ICommand UploadDataCommand { get; private set; }
 
         public void BuildChart()
         {
@@ -134,9 +133,9 @@ namespace Forecaster.Client.MVVM.ViewModels
             {
                 if (IsManualSelected)
                 {
-                    if (CsvBytes != null)
+                    if (StockCsvData != null)
                     {
-                        csvContent = CsvReader.ReadFromBytes(CsvBytes).ToList();
+                        csvContent = CsvReader.ReadFromBytes(StockCsvData).ToList();
                     }
                     else
                     {
@@ -162,25 +161,31 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         public ClientWindowViewModel()
         {
-            InitAlgorithms();
-
-            InitInputGBoxesVisual();
-
-            InitializeCommands();
-
             Predictions = new List<Dictionary<string, string>>();
 
             DiagrammPainter = new Painter();
 
             IoService = new Win32IO();
+
+            ClientController.TransferPredictions += HandlePredictions;
+
+            InitAlgorithms();
+
+            InitializeClient();
+
+            InitializeCommands();
+
+            InitInputGBoxesVisual();          
         }
 
         private void InitializeCommands()
-        {
-            BuildChartCommand = new RelayCommand(BuildChart);
+        {           
             OpenManualInputWindowCommand = new RelayCommand(OpenManualInputWindow);
             OpenSettingsWindowCommand = new RelayCommand(OpenSettingsWindow);
+            OpenPredictionsComparsionWindowCommand = new RelayCommand(OpenPredictionsComparsionWindow);
+            BuildChartCommand = new RelayCommand(BuildChart);
             ChoseStockFileCommand = new RelayCommand(ChoseStockFile);
+            UploadDataCommand = new RelayCommand(UploadData);
         }
 
         private void OpenManualInputWindow()
@@ -191,7 +196,7 @@ namespace Forecaster.Client.MVVM.ViewModels
 
             if (manualInputContext.DialogResult == true)
             {
-                CsvBytes = manualInputContext.ManualCsvBytes;
+                StockCsvData = manualInputContext.ManualCsvBytes;
 
                 IsManualSelected = true;
             }
@@ -201,7 +206,7 @@ namespace Forecaster.Client.MVVM.ViewModels
         {
             SettingsViewModel settingsContext = new SettingsViewModel();
 
-            ChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
+            //ChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
 
             WindowService.ShowDialog(settingsContext);
 
@@ -245,6 +250,62 @@ namespace Forecaster.Client.MVVM.ViewModels
             }
             else
                 IsManualSelected = false;
+        }
+
+        private void UploadData()
+        {
+            try
+            {
+                if (IsManualSelected)
+                {
+                    if (StockCsvData != null)
+                    {
+                        ClientController.SendFile(StockCsvData, selectedAlgorithm, Client);
+                    }
+                    else
+                        MessageBox.Show(Localization.Strings.ManualDataNotEntered);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(PathToStockFile))
+                        throw new ArgumentException(Localization.Strings.EmptyPathFileException);
+
+                    ClientController.SendFile(PathToStockFile, selectedAlgorithm, Client);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(Localization.Strings.ServerHandleException);
+            }
+        }
+
+        private void HandlePredictions(Dictionary<string, string> restoredPredictions)
+        {
+            if (!Predictions.Contains(restoredPredictions))
+                Predictions.Add(restoredPredictions);
+
+            DrawPredictions(restoredPredictions);
+        }
+
+        private void DrawPredictions(Dictionary<string, string> restoredPredictions)
+        {
+            var predictionsToDraw = ResponseConverter.ConvertResponsePredictions(restoredPredictions);
+
+            var lineToDraw = new DiagrammBuilder().CreateLineSeriesRange(predictionsToDraw);
+
+            DiagrammPainter.AddLine(lineToDraw.ElementAt(0));
+        }
+
+        private void OpenPredictionsComparsionWindow()
+        {
+            if (Predictions.Count < 1)
+                MessageBox.Show(Localization.Strings.PredictionsToCompareIsEmpty);
+            else
+            {
+                PredictionsComparsionViewModel predictionsComparsionContext = new PredictionsComparsionViewModel(Predictions);
+
+                WindowService.ShowWindow(predictionsComparsionContext);
+            }
         }
     }
 }

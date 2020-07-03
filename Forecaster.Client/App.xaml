@@ -14,5 +14,8 @@
         <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
             <local:SettingsControl />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:PredictionsComparsionViewModel}">
+            <local:PredictionsComparsionControl />
+        </DataTemplate>
     </Application.Resources>
 </Application>

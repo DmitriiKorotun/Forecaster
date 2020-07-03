@@ -86,6 +86,7 @@
     <Compile Include="ManualInputWindow.xaml.cs">
       <DependentUpon>ManualInputWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MVVM\Entities\ComparsionItemControlData.cs" />
     <Compile Include="MVVM\Entities\DialogCloser.cs" />
     <Compile Include="MVVM\Entities\RelayCommand.cs" />
     <Compile Include="MVVM\Entities\RelayCommand4.cs" />
@@ -93,11 +94,16 @@
     <Compile Include="MVVM\IO\IOService.cs" />
     <Compile Include="MVVM\Navigation\Mediator.cs" />
     <Compile Include="MVVM\Navigation\WindowService.cs" />
+    <Compile Include="MVVM\ViewModels\ArgumentfulViewModel.cs" />
     <Compile Include="MVVM\ViewModels\ClientWindowViewModel.cs" />
     <Compile Include="MVVM\ViewModels\CloseableViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\PredictionsComparsionViewModel.cs" />
     <Compile Include="Network\ClientExceptionHandler.cs" />
     <Compile Include="Network\ExceptionReportEventArgs.cs" />
     <Compile Include="Network\ClientController.cs" />
+    <Compile Include="PredictionsComparsionControl.xaml.cs">
+      <DependentUpon>PredictionsComparsionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ResultsWindow.xaml.cs">
       <DependentUpon>ResultsWindow.xaml</DependentUpon>
     </Compile>
@@ -127,6 +133,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ManualInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PredictionsComparsionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

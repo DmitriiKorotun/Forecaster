@@ -162,6 +162,9 @@
   <data name="ManualInput" xml:space="preserve">
     <value>Manual input</value>
   </data>
+  <data name="NeedMoreDataToPredict" xml:space="preserve">
+    <value>Need more data to predict</value>
+  </data>
   <data name="Or" xml:space="preserve">
     <value>Or</value>
   </data>

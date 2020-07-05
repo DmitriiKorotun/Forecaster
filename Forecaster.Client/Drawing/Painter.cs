@@ -40,7 +40,7 @@ namespace Forecaster.Client.Drawing
           
             Formatter = FormatterManager.CreateFormatter();
 
-            SetAxisLimit();
+            UpdateAxisLimit();
         }
 
         public Painter(SeriesCollection series)
@@ -51,7 +51,7 @@ namespace Forecaster.Client.Drawing
 
             Formatter = FormatterManager.CreateFormatter();
 
-            SetAxisLimit();
+            UpdateAxisLimit();
         }
 
         public void AddLine(LineSeries line)
@@ -77,9 +77,9 @@ namespace Forecaster.Client.Drawing
                 Series.Add(newLineSeries);
         }
 
-        public void SetAxisLimit()
+        public void UpdateAxisLimit()
         {
-            if (Settings.Default.IsShowPartOfData)
+            if (Settings.Default.IsShowChartPeriod)
             {
                 MinX = Settings.Default.ScopeStart.Ticks / TimeSpan.FromDays(1).Ticks;
                 MaxX = Settings.Default.ScopeEnd.Ticks / TimeSpan.FromDays(1).Ticks;

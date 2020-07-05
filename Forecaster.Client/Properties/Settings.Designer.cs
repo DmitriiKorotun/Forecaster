@@ -26,24 +26,24 @@ namespace Forecaster.Client.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("8")]
-        public ushort DefaultAlgorithm {
+        public ushort SelectedAlgorithm {
             get {
-                return ((ushort)(this["DefaultAlgorithm"]));
+                return ((ushort)(this["SelectedAlgorithm"]));
             }
             set {
-                this["DefaultAlgorithm"] = value;
+                this["SelectedAlgorithm"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("false")]
-        public bool IsShowPartOfData {
+        public bool IsShowChartPeriod {
             get {
-                return ((bool)(this["IsShowPartOfData"]));
+                return ((bool)(this["IsShowChartPeriod"]));
             }
             set {
-                this["IsShowPartOfData"] = value;
+                this["IsShowChartPeriod"] = value;
             }
         }
         

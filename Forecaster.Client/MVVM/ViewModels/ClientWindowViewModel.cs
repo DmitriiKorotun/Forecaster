@@ -2,6 +2,7 @@
 using Forecaster.Client.CSV;
 using Forecaster.Client.Drawing;
 using Forecaster.Client.Local;
+using Forecaster.Client.MVVM.Config;
 using Forecaster.Client.MVVM.Entities;
 using Forecaster.Client.MVVM.IO;
 using Forecaster.Client.MVVM.Navigation;
@@ -119,6 +120,7 @@ namespace Forecaster.Client.MVVM.ViewModels
         }
 
         private IOService IoService { get; set; }
+        private IConfigProvider ConfigProvider { get; set; }
      
         public ICommand OpenManualInputWindowCommand { get; private set; }
         public ICommand OpenSettingsWindowCommand { get; private set; }
@@ -169,6 +171,8 @@ namespace Forecaster.Client.MVVM.ViewModels
 
             IoService = new Win32IO();
 
+            ConfigProvider = new SettingsProvider();
+
             ClientController.TransferPredictions += HandlePredictions;
 
             InitAlgorithms();
@@ -208,7 +212,7 @@ namespace Forecaster.Client.MVVM.ViewModels
         {
             SettingsViewModel settingsContext = new SettingsViewModel();
 
-            //ChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
+            ChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
 
             WindowService.ShowDialog(settingsContext);
 
@@ -224,7 +228,7 @@ namespace Forecaster.Client.MVVM.ViewModels
                 { (ushort)PredictionAlgorithm.AutoArima, "AutoARIMA" }
             };
 
-            SelectedAlgorithm = Settings.Default.SelectedAlgorithm;
+            SelectedAlgorithm = ConfigProvider.SelectedAlgorithm;
         }
 
         private void InitInputGBoxesVisual()

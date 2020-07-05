@@ -56,21 +56,22 @@
             <DatePicker x:Name="calendar_from" SelectedDate="{Binding ScopeStart}"
                         DisplayDateEnd="{Binding DisplayDateEndFrom, Mode=OneWay}"
                         Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
-                        VerticalAlignment="Center">
-                <DatePicker.Resources>
+                        VerticalAlignment="Center" IsEnabled="{Binding IsChartPeriodSelected}">
+                <!--<DatePicker.Resources>
                     <Style TargetType="DatePickerTextBox">
                         <Setter Property="IsReadOnly" Value="True"/>
                     </Style>
-                </DatePicker.Resources>
+                </DatePicker.Resources>-->
             </DatePicker>
 
             <DatePicker x:Name="calendar_to" SelectedDate="{Binding ScopeEnd}"
                         DisplayDateStart="{Binding DisplayDateStartTo, Mode=OneWay}"
                         Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center" IsEnabled="{Binding IsChartPeriodSelected}"
+                        Focusable="False">
                 <DatePicker.Resources>
                     <Style TargetType="DatePickerTextBox">
-                        <Setter Property="IsReadOnly" Value="True"/>
+                        <Setter Property="IsReadOnly" Value="{Binding Kek}"/>
                     </Style>
                 </DatePicker.Resources>
             </DatePicker>

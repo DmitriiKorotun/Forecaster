@@ -1,4 +1,5 @@
-﻿using Forecaster.Client.MVVM.Entities;
+﻿using Forecaster.Client.MVVM.Config;
+using Forecaster.Client.MVVM.Entities;
 using Forecaster.Client.Properties;
 using System;
 using System.Collections.Generic;
@@ -12,42 +13,44 @@ namespace Forecaster.Client.MVVM.ViewModels
 {
     class SettingsViewModel : CloseableViewModel
     {
+        public IConfigProvider ConfigProvider { get; set; }
+
         public bool IsAllChartSelected
         {
-            get { return !Settings.Default.IsShowChartPeriod; }
+            get { return !ConfigProvider.IsShowChartPeriod; }
             set
             {
-                Settings.Default.IsShowChartPeriod = !value;
+                ConfigProvider.IsShowChartPeriod = !value;
                 OnPropertyChanged("IsAllChartSelected");
             }
         }
 
         public bool IsChartPeriodSelected
         {
-            get { return Settings.Default.IsShowChartPeriod; }
+            get { return ConfigProvider.IsShowChartPeriod; }
             set
             {
-                Settings.Default.IsShowChartPeriod = value;
+                ConfigProvider.IsShowChartPeriod = value;
                 OnPropertyChanged("IsChartPeriodSelected");
             }
         }
 
         public DateTime ScopeStart
         {
-            get { return Settings.Default.ScopeStart; }
+            get { return ConfigProvider.ScopeStart; }
             set
             {
-                Settings.Default.ScopeStart = value;
+                ConfigProvider.ScopeStart = value;
                 OnPropertyChanged("ScopeStart");
             }
         }
 
         public DateTime ScopeEnd
         {
-            get { return Settings.Default.ScopeEnd; }
+            get { return ConfigProvider.ScopeEnd; }
             set
             {
-                Settings.Default.ScopeEnd = value;
+                ConfigProvider.ScopeEnd = value;
                 OnPropertyChanged("ScopeEnd");
             }
         }
@@ -64,10 +67,10 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         public ushort SelectedAlgorithm
         {
-            get { return Settings.Default.SelectedAlgorithm; }
+            get { return ConfigProvider.SelectedAlgorithm; }
             set
             {
-                Settings.Default.SelectedAlgorithm = value;
+                ConfigProvider.SelectedAlgorithm = value;
                 OnPropertyChanged("SelectedAlgorithm");
             }
         }
@@ -85,17 +88,19 @@ namespace Forecaster.Client.MVVM.ViewModels
         public SettingsViewModel()
         {
             InitCommands();
+
+            ConfigProvider = new SettingsProvider();
         }
 
         private void InitCommands()
         {
-            ApplyCommand = new RelayCommand(Apply);
+            ApplyCommand = new RelayCommand(Apply, (obj) => { return CheckDatesBound(); });
             CancelCommand = new RelayCommand(Cancel);
         }
 
         private void Apply()
         {
-            Settings.Default.Save();
+            ConfigProvider.Save();
 
             OnClosingRequest();
         }
@@ -103,6 +108,11 @@ namespace Forecaster.Client.MVVM.ViewModels
         private void Cancel()
         {
             OnClosingRequest();
+        }
+
+        private bool CheckDatesBound()
+        {
+            return (ScopeEnd - ScopeStart).Days >= 7;
         }
     }
 }

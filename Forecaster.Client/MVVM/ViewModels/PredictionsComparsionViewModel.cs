@@ -79,9 +79,6 @@ namespace Forecaster.Client.MVVM.ViewModels
                 throw new ArgumentException();
         }
 
-
-        
-
         protected override void AssignArguments()
         {
             if (Args.Count() > 0)

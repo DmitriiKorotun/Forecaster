@@ -86,11 +86,12 @@
     <Compile Include="MVVM\Entities\ComparsionItemControlData.cs" />
     <Compile Include="MVVM\Entities\DialogCloser.cs" />
     <Compile Include="MVVM\Entities\RelayCommand.cs" />
-    <Compile Include="MVVM\Entities\RelayCommand4.cs" />
     <Compile Include="MVVM\IO\Win32IO.cs" />
     <Compile Include="MVVM\IO\IOService.cs" />
     <Compile Include="MVVM\Navigation\Mediator.cs" />
     <Compile Include="MVVM\Navigation\WindowService.cs" />
+    <Compile Include="MVVM\Config\IConfigProvider.cs" />
+    <Compile Include="MVVM\Config\SettingsProvider.cs" />
     <Compile Include="MVVM\ViewModels\ArgumentfulViewModel.cs" />
     <Compile Include="MVVM\ViewModels\ClientWindowViewModel.cs" />
     <Compile Include="MVVM\ViewModels\CloseableViewModel.cs" />

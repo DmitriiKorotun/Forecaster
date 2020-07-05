@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Forecaster.Client.MVVM.ViewModels
 {
@@ -22,9 +23,9 @@ namespace Forecaster.Client.MVVM.ViewModels
         {
             Entries = new ObservableCollection<BasicDataset>();
 
-            InitTestEntries();
+            //InitTestEntries();
 
-            ApplyCommand = new RelayCommand(Apply);
+            ApplyCommand = new RelayCommand(Apply, (obj) => { return Entries.Count > 0; });
             CloseCommand = new RelayCommand(OnClosingRequest);
         }
 
@@ -104,15 +105,20 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         private void Apply()
         {
-            IEnumerable<string> gridContent = ReadManualDataGrid();
+            if (Entries.Count >= 10)
+            {
+                IEnumerable<string> gridContent = ReadManualDataGrid();
 
-            IEnumerable<string> csvLines = AddHeadersLine(gridContent);
+                IEnumerable<string> csvLines = AddHeadersLine(gridContent);
 
-            ManualCsvBytes = ConvertToByteArray(csvLines);
+                ManualCsvBytes = ConvertToByteArray(csvLines);
 
-            DialogResult = true;
+                DialogResult = true;
 
-            OnClosingRequest();
+                OnClosingRequest();
+            }
+            else
+                MessageBox.Show(Localization.Strings.NeedMoreDataToPredict);
         }
 
         private byte[] ConvertToByteArray(IEnumerable<string> csvLines)

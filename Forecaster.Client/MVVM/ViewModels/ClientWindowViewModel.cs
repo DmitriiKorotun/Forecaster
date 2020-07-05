@@ -103,6 +103,8 @@ namespace Forecaster.Client.MVVM.ViewModels
             } 
         }
 
+        private bool IsDataTransfering { get; set; } = false;
+
         private const string defaultPathToStockFile = "C:/Users/korot/source/repos/Forecaster/ForecasterServer/bin/Debug/fortests/NSE-TATAGLOBAL11.csv";
 
         private string pathToStockFile = defaultPathToStockFile;
@@ -182,10 +184,10 @@ namespace Forecaster.Client.MVVM.ViewModels
         {           
             OpenManualInputWindowCommand = new RelayCommand(OpenManualInputWindow);
             OpenSettingsWindowCommand = new RelayCommand(OpenSettingsWindow);
-            OpenPredictionsComparsionWindowCommand = new RelayCommand(OpenPredictionsComparsionWindow);
-            BuildChartCommand = new RelayCommand(BuildChart);
+            OpenPredictionsComparsionWindowCommand = new RelayCommand(OpenPredictionsComparsionWindow, (obj) => { return Predictions.Count > 0; }) ;
+            BuildChartCommand = new RelayCommand(BuildChart, (obj) => { return !string.IsNullOrEmpty(PathToStockFile); });
             ChoseStockFileCommand = new RelayCommand(ChoseStockFile);
-            UploadDataCommand = new RelayCommand(UploadData);
+            UploadDataCommand = new RelayCommand(UploadData, (obj) => { return !IsDataTransfering; });
         }
 
         private void OpenManualInputWindow()
@@ -256,6 +258,8 @@ namespace Forecaster.Client.MVVM.ViewModels
         {
             try
             {
+                IsDataTransfering = true;
+
                 if (IsManualSelected)
                 {
                     if (StockCsvData != null)
@@ -276,6 +280,8 @@ namespace Forecaster.Client.MVVM.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(Localization.Strings.ServerHandleException);
+
+                IsDataTransfering = false;
             }
         }
 
@@ -285,6 +291,8 @@ namespace Forecaster.Client.MVVM.ViewModels
                 Predictions.Add(restoredPredictions);
 
             DrawPredictions(restoredPredictions);
+
+            IsDataTransfering = false;
         }
 
         private void DrawPredictions(Dictionary<string, string> restoredPredictions)

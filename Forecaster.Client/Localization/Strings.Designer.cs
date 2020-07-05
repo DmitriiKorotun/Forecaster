@@ -196,6 +196,15 @@ namespace Forecaster.Client.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Need more data to predict.
+        /// </summary>
+        public static string NeedMoreDataToPredict {
+            get {
+                return ResourceManager.GetString("NeedMoreDataToPredict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Or.
         /// </summary>
         public static string Or {

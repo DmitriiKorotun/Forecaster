@@ -10,8 +10,8 @@
     <Grid Background="White">
         <Grid x:Name="comparsionGrid2">
             <ScrollViewer x:Name="comparsionScroller"
-                HorizontalScrollBarVisibility="Auto" 
-                VerticalScrollBarVisibility="Disabled">
+                          HorizontalScrollBarVisibility="Auto" 
+                          VerticalScrollBarVisibility="Disabled">
                 <!--<Grid>-->
                 <ItemsControl ItemsSource="{Binding PredictionItems}"
                               Height="{Binding ElementName=comparsionScroller, Path=ActualHeight}"
@@ -32,7 +32,17 @@
 
 
                                 <DataGrid ItemsSource="{Binding Predictions}"
-                                          Grid.ColumnSpan="2"/>
+                                          Grid.ColumnSpan="2"
+                                          AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn MinWidth="100" 
+                                                            Header="{x:Static localization:Strings.Date}" 
+                                                            Binding="{Binding Key}"/>
+                                        <DataGridTextColumn MinWidth="60" 
+                                                            Header="{x:Static localization:Strings.Price}" 
+                                                            Binding="{Binding Value}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
 
 
                                 <Button Content="{x:Static localization:Strings.Save}"
@@ -63,8 +73,8 @@
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Orientation="Horizontal"
-                            Width="{Binding ElementName=comparsionGrid2, Path=Width}"
-                                            Height="{Binding ElementName=comparsionGrid2, Path=Height}"/>
+                                                    Width="{Binding ElementName=comparsionGrid2, Path=Width}"
+                                                    Height="{Binding ElementName=comparsionGrid2, Path=Height}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>

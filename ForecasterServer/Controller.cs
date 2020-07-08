@@ -17,20 +17,23 @@ namespace Forecaster.Server
 {
     public static class Controller
     {
-        static Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } = new Dictionary<ushort, IPredictionAlgorithm>() { {1, new MovingAverage()} };
+        static Dictionary<ushort, IPredictionAlgorithm> Algorithms { get; set; } =
+            new Dictionary<ushort, IPredictionAlgorithm>() {
+                {1, new MovingAverage()}, {2, new LinearRegression() }, {4, new KNearestNeighbors() }, {8, new AutoArima() }
+            };
 
         public static byte[] GetResponse(byte[] receivedData)
         {
             FileTransferRequest request = RequestHandler.RestoreRequest<FileTransferRequest>(receivedData);
 
-            List<BasicDataset> predictions = GetPrediction(request);
+            IEnumerable<BasicDataset> predictions = GetPrediction(request);
 
             PredictionResponse response = CreateResponse(predictions);
 
             return ResponseManager.CreateByteResponse(response);
         }
 
-        private static PredictionResponse CreateResponse(List<BasicDataset> predictions)
+        private static PredictionResponse CreateResponse(IEnumerable<BasicDataset> predictions)
         {
             PredictionResponse response;
 
@@ -41,9 +44,9 @@ namespace Forecaster.Server
             return response;
         }
 
-        private static Dictionary<string, string> ConvertToDateCloseDictionary(List<BasicDataset> predictions)
+        private static Dictionary<string, string> ConvertToDateCloseDictionary(IEnumerable<BasicDataset> predictions)
         {
-            Dictionary<string, string> datePricePredictions = new Dictionary<string, string>(predictions.Count);
+            Dictionary<string, string> datePricePredictions = new Dictionary<string, string>(predictions.Count());
 
             foreach (BasicDataset prediction in predictions)
             {
@@ -56,7 +59,7 @@ namespace Forecaster.Server
             return datePricePredictions;
         }
 
-        private static List<BasicDataset> GetPrediction(FileTransferRequest request)
+        private static IEnumerable<BasicDataset> GetPrediction(FileTransferRequest request)
         {
             IPredictionAlgorithm algorithm = ChosePredictionAlgorithm(request.SelectedAlgortihms);
 

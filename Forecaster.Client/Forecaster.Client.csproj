@@ -70,13 +70,48 @@
     <Compile Include="Drawing\FormatterManager.cs" />
     <Compile Include="Drawing\Painter.cs" />
     <Compile Include="Drawing\ResponseConverter.cs" />
+    <Compile Include="Localization\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Localization\Strings.ru.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.ru.resx</DependentUpon>
+    </Compile>
     <Compile Include="Local\Reader.cs" />
     <Compile Include="Local\Writer.cs" />
     <Compile Include="Logging\RamLogger.cs" />
+    <Compile Include="MVVM\Entities\ComparsionItemControlData.cs" />
+    <Compile Include="MVVM\Entities\DialogCloser.cs" />
+    <Compile Include="MVVM\Entities\RelayCommand.cs" />
+    <Compile Include="MVVM\IO\Win32IO.cs" />
+    <Compile Include="MVVM\IO\IOService.cs" />
+    <Compile Include="MVVM\Navigation\Mediator.cs" />
+    <Compile Include="MVVM\Navigation\WindowService.cs" />
+    <Compile Include="MVVM\Config\IConfigProvider.cs" />
+    <Compile Include="MVVM\Config\SettingsProvider.cs" />
+    <Compile Include="MVVM\ViewModels\ArgumentfulViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\ClientWindowViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\CloseableViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\PredictionsComparsionViewModel.cs" />
     <Compile Include="Network\ClientExceptionHandler.cs" />
     <Compile Include="Network\ExceptionReportEventArgs.cs" />
     <Compile Include="Network\ClientController.cs" />
+    <Compile Include="PredictionsComparsionControl.xaml.cs">
+      <DependentUpon>PredictionsComparsionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsControl.xaml.cs">
+      <DependentUpon>SettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StateObject.cs" />
+    <Compile Include="MVVM\ViewModels\BasicViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\ManualInputViewModel.cs" />
+    <Compile Include="MVVM\ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ManualInputControl.xaml.cs">
+      <DependentUpon>ManualInputControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="ClientWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -89,6 +124,18 @@
       <DependentUpon>ClientWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PredictionsComparsionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ManualInputControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -104,9 +151,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Localization\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Strings.ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.ru.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -121,6 +176,14 @@
     <ProjectReference Include="..\..\TestFCClient\Forecaster.Net\Forecaster.Net.csproj">
       <Project>{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}</Project>
       <Name>Forecaster.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Csv\Csv.csproj">
+      <Project>{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}</Project>
+      <Name>Csv</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Forecaster\Forecaster.csproj">
+      <Project>{4DF1528C-87BE-49EC-A804-F4FB2E7363C5}</Project>
+      <Name>Forecaster</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

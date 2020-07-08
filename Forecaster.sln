@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Server.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forecaster.Tests", "Forecaster.Tests\Forecaster.Tests.csproj", "{A6982939-F2C6-4F4E-A788-25D3FC7A4021}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csv", "Csv\Csv.csproj", "{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6982939-F2C6-4F4E-A788-25D3FC7A4021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF46B67E-A670-4308-98D3-72BA4AAAA5D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

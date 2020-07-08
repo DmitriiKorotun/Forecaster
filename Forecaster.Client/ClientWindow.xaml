@@ -5,60 +5,109 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Forecaster.Client"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:localization="clr-namespace:Forecaster.Client.Localization"
         mc:Ignorable="d"
         Title="Forecaster Client" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"></RowDefinition>
-            <RowDefinition Height="70*"></RowDefinition>
-            <RowDefinition Height="20*"></RowDefinition>
+            <RowDefinition Height="60*"></RowDefinition>
+            <RowDefinition Height="25*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width="8*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="2">
-            <MenuItem Header="File"/>
+            <MenuItem Header="{x:Static localization:Strings.File}">
+                <MenuItem Header="{x:Static localization:Strings.Settings}"
+                          Command="{Binding OpenSettingsWindowCommand}"/>
+            </MenuItem>
+            <MenuItem Header="{x:Static localization:Strings.Predictions}">
+                <MenuItem Header="{x:Static localization:Strings.Compare}"
+                          Command="{Binding OpenPredictionsComparsionWindowCommand}"/>
+            </MenuItem>
         </Menu>
 
         <Grid Grid.Column="1" Grid.Row="1" Margin="10">
             <lvc:CartesianChart Series="{Binding DiagrammPainter.Series}">
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis LabelFormatter="{Binding Path=DiagrammPainter.Formatter}"></lvc:Axis>
+                    <lvc:Axis LabelFormatter="{Binding Path=DiagrammPainter.Formatter}"
+                              MinValue="{Binding Path=DiagrammPainter.MinX, Mode=TwoWay}"
+                              MaxValue="{Binding Path=DiagrammPainter.MaxX, Mode=TwoWay}">
+                    </lvc:Axis>
                 </lvc:CartesianChart.AxisX>
             </lvc:CartesianChart>
         </Grid>
-
-        <Grid HorizontalAlignment="Left" Width="100"/>
 
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20*"></RowDefinition>
                 <RowDefinition Height="80*"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBlock Padding="5, 0, 0, 0" TextWrapping="Wrap" Text="Output"/>
+            <TextBlock Padding="5, 0, 0, 0" TextWrapping="Wrap" 
+                       Text="{x:Static localization:Strings.Output}"/>
             <ScrollViewer Grid.Row="1">
-                <TextBlock x:Name="tbl_output" Grid.Row="1" Margin="5" TextWrapping="Wrap" Background="#FFF3F3F3"/>
+                <TextBlock x:Name="tbl_output" Grid.Row="1" Margin="5" 
+                           TextWrapping="Wrap" Background="#FFF3F3F3"/>
             </ScrollViewer>
 
         </Grid>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*"></RowDefinition>
-                <RowDefinition Height="20*"></RowDefinition>
-                <RowDefinition Height="60*"></RowDefinition>
+                <RowDefinition Height="45*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="45*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*"></ColumnDefinition>
-                <ColumnDefinition Width="5*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <TextBox Text="C:\Users\korot\source\repos\Forecaster\Forecaster.Client\bin\Debug\fortests\XTSE-AAB.csv" Name="tb_fileToUpload" Height="23" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" IsReadOnly="True"/>
-            <Button Margin="5, 0" Content="Chose file" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Click="Button_Click"/>
-            <Button Margin="5, 0" Content="Upload" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
-            <ComboBox Name="cb_algList" Margin="5, 0" Grid.Row="2" VerticalAlignment="Top" Grid.ColumnSpan="2"
-                      SelectedValuePath="Key" DisplayMemberPath="Value"/>
-            <Button Name="btn_fillDiagramm" Margin="5, 5" Content="Fill diagramm" Grid.Row="1" VerticalAlignment="Bottom" Click="btn_fillDiagramm_Click"/>
+            <GroupBox Name="gbox_choseFile" 
+                      Header="{x:Static localization:Strings.ChoseFile}" Margin="5"
+                      BorderBrush="Black" 
+                      BorderThickness="{Binding InputGroupBoxesVisual.FileBorderThickness}">
+                <Grid Name="grid_choseFile">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20*"></RowDefinition>
+                        <RowDefinition Height="20*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Content="{x:Static localization:Strings.ChoseFile}" 
+                            VerticalAlignment="Center"
+                            Command="{Binding ChoseStockFileCommand}" Margin="5"/>
+                    <TextBox Text="{Binding PathToStockFile}"
+                             Name="tb_fileToUpload" Height="24" VerticalAlignment="Center"
+                             IsReadOnly="True" Grid.Row="1" Margin="5"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Name="gbox_manualInput" 
+                      Header="{x:Static localization:Strings.ManualInput}" Grid.Row="2"
+                      Margin="5" BorderBrush="Black" 
+                      BorderThickness="{Binding InputGroupBoxesVisual.ManualBorderThickness}">
+                <Grid Name="grid_manualInput">
+                    <Button Name="btn_manualInput" 
+                            Content="{x:Static localization:Strings.ManualInput}" 
+                            VerticalAlignment="Center"
+                            Margin="5" Command="{Binding OpenManualInputWindowCommand}"/>
+                </Grid>
+            </GroupBox>
+            <Label Content="{x:Static localization:Strings.Or}" Grid.Row="1"
+                   HorizontalAlignment="Center"/>
         </Grid>
-
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Button Name="btn_fillDiagramm" 
+                    Content="{x:Static localization:Strings.FillDiagramm}"
+                    VerticalAlignment="Center" Margin="5, 0" 
+                    Command="{Binding BuildChartCommand}"/>
+            <Button Grid.Row="2" Content="{x:Static localization:Strings.Upload}" 
+                    VerticalAlignment="Center" Grid.Column="1" Margin="5, 0"
+                    Command="{Binding UploadDataCommand}"/>
+            <ComboBox Grid.Row="1" Name="cb_algList" VerticalAlignment="Center"
+                      SelectedValuePath="Key" DisplayMemberPath="Value"
+                      ItemsSource="{Binding Algorithms}"
+                      SelectedValue="{Binding SelectedAlgorithm}"
+                      Margin="5, 0" Grid.ColumnSpan="2"/>
+        </Grid>
     </Grid>
 </Window>

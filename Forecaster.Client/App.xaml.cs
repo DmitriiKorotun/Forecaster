@@ -13,5 +13,14 @@ namespace Forecaster.Client
     /// </summary>
     public partial class App : Application
     {
+        //protected override void OnStartup(StartupEventArgs e)
+        //{
+        //    base.OnStartup(e);
+
+        //    ClientWindow app = new ClientWindow();
+        //    //ClientWindowViewModel context = new ClientWindowViewModel();
+        //    //app.DataContext = context;
+        //    app.Show();
+        //}
     }
 }

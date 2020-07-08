@@ -53,10 +53,24 @@ namespace Forecaster.Client.Network
 
         public static byte[] SendFile(string path, ushort selectedAlgortihm, AsynchronousClient client)
         {
+            byte[] fileBytes;
             try
             {
-                byte[] fileBytes = ReadFile(path),
-                    requestBytes = CreateFTRequestBytes(fileBytes, selectedAlgortihm);
+                fileBytes = ReadFile(path);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return SendFile(fileBytes, selectedAlgortihm, client);
+        }
+
+        public static byte[] SendFile(byte[] dataToPredict, ushort selectedAlgortihm, AsynchronousClient client)
+        {
+            try
+            {
+                byte[] requestBytes = CreateFTRequestBytes(dataToPredict, selectedAlgortihm);
 
                 using (client)
                 {

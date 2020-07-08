@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +36,15 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accord, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.3.8.0\lib\net462\Accord.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Math, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Math.3.8.0\lib\net462\Accord.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Math.Core, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Math.3.8.0\lib\net462\Accord.Math.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -75,7 +86,6 @@
   <ItemGroup>
     <Compile Include="AsynchronousSocketListener.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="Csv\CsvReader.cs" />
     <Compile Include="Local\FileManager.cs" />
     <Compile Include="Local\Initializer.cs" />
     <Compile Include="Local\Logging\ILogger.cs" />
@@ -84,16 +94,19 @@
     <Compile Include="Prediction\PredictionController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scoring\Scorer.cs" />
     <Compile Include="StateObject.cs" />
-    <Compile Include="TempIO\CsvConverter.cs" />
     <Compile Include="TempIO\DatasetCreator.cs" />
-    <Compile Include="TempIO\Reader.cs" />
     <Compile Include="TempIO\Writer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestFCClient\Forecaster.Net\Forecaster.Net.csproj">
       <Project>{00B04039-BCF8-45EA-B8F1-8A12D77C1D19}</Project>
       <Name>Forecaster.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Csv\Csv.csproj">
+      <Project>{ef46b67e-a670-4308-98d3-72ba4aaaa5d7}</Project>
+      <Name>Csv</Name>
     </ProjectReference>
     <ProjectReference Include="..\Forecaster\Forecaster.csproj">
       <Project>{4df1528c-87be-49ec-a804-f4fb2e7363c5}</Project>
@@ -109,4 +122,11 @@
     <Folder Include="Exceptions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Accord.3.8.0\build\Accord.targets" Condition="Exists('..\packages\Accord.3.8.0\build\Accord.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Accord.3.8.0\build\Accord.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Accord.3.8.0\build\Accord.targets'))" />
+  </Target>
 </Project>

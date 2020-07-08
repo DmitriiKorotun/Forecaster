@@ -1,7 +1,8 @@
-﻿using Forecaster.Forecasting.Entities;
+﻿using Accord;
+using Csv;
+using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Net;
-using Forecaster.Server.Csv;
 using Forecaster.Server.TempIO;
 using Forecaster.TempIO;
 using System;
@@ -14,40 +15,56 @@ namespace Forecaster.Server.Prediction
 {
     public static class PredictionController
     {
-        public static List<BasicDataset> Predict(List<StockDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
+        public static IEnumerable<BasicDataset> Predict(List<BasicDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
         {
-            List<StockDataset> orderedSet = OrderSet(dataset);
+            List<BasicDataset> orderedSet = OrderSet(dataset);
 
             return predictionAlgorithm.Predict(orderedSet);
         }
 
-        public static List<BasicDataset> Predict(string pathToCSV, IPredictionAlgorithm predictionAlgorithm)
+        public static IEnumerable<BasicDataset> Predict(string pathToCSV, IPredictionAlgorithm predictionAlgorithm)
         {
             List<string[]> csvData = ReadCSV(pathToCSV);
 
             return Predict(csvData, predictionAlgorithm);
         }
 
+        public static IEnumerable<BasicDataset> Predict(string pathToCSV, IPredictionAlgorithm predictionAlgorithm, out IEnumerable<BasicDataset> datasets)
+        {
+            List<string[]> csvData = ReadCSV(pathToCSV);
 
-        public static List<BasicDataset> Predict(byte[] fileBytes, IPredictionAlgorithm predictionAlgorithm)
+            return Predict(csvData, predictionAlgorithm, out datasets);
+        }
+
+
+        public static IEnumerable<BasicDataset> Predict(byte[] fileBytes, IPredictionAlgorithm predictionAlgorithm)
         {
             List<string[]> csvData = ConvertCSV(fileBytes);
 
             return Predict(csvData, predictionAlgorithm);
         }
 
-        private static List<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm)
+        private static IEnumerable<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm)
         {
             DatasetCreator datasetCreator = new DatasetCreator();
 
-            List<StockDataset> stockList = datasetCreator.CreateFromCsv(csvData).ToList();
+            List<BasicDataset> stockList = datasetCreator.CreateFromCsv(csvData).ToList();
 
             return Predict(stockList, predictionAlgorithm);
         }
 
-        private static List<StockDataset> OrderSet(List<StockDataset> dataset, bool isAscending = true)
+        private static IEnumerable<BasicDataset> Predict(List<string[]> csvData, IPredictionAlgorithm predictionAlgorithm, out IEnumerable<BasicDataset> datasets)
         {
-            List<StockDataset> orderedSet = dataset.OrderBy(item => item.Date).ToList();
+            DatasetCreator datasetCreator = new DatasetCreator();
+
+            datasets = datasetCreator.CreateFromCsv(csvData).ToList();
+
+            return Predict(datasets.ToList(), predictionAlgorithm);
+        }
+
+        private static List<BasicDataset> OrderSet(List<BasicDataset> dataset, bool isAscending = true)
+        {
+            List<BasicDataset> orderedSet = dataset.OrderBy(item => item.Date).ToList();
 
             if (!isAscending)
                 orderedSet.Reverse();
@@ -57,21 +74,21 @@ namespace Forecaster.Server.Prediction
 
         private static List<string[]> ReadCSV(string pathToCSV)
         {
-            List<string[]> csvData = Reader.ReadCSV(pathToCSV);
+            List<string[]> csvData = CsvReader.Read(pathToCSV);
 
             return csvData;
         }
 
         private static List<string[]> ConvertCSV(byte[] csvBytes)
         {
-            List<string[]> csvData = CsvConverter.Convert(csvBytes).ToList();
+            List<string[]> csvData = CsvReader.ReadFromBytes(csvBytes).ToList();
 
             return csvData;
         }
 
-        private static List<StockDataset> CreateStockList(List<string[]> inputData, int count, int inputOffset)
+        private static List<BasicDataset> CreateStockList(List<string[]> inputData, int count, int inputOffset)
         {
-            List<StockDataset> stockList = new List<StockDataset>();
+            List<BasicDataset> stockList = new List<BasicDataset>();
 
             FillList(stockList, inputData, count, inputOffset);
 
@@ -83,7 +100,7 @@ namespace Forecaster.Server.Prediction
             int lastIndex = inputOffset + count;
 
             for (int i = inputOffset; i < lastIndex; ++i)
-                stockList.Add(new StockDataset(inputData[i]));
+                stockList.Add(new BasicDataset(inputData[i]));
         }
 
         private static void FillList(List<StockDataset> stockList, List<string[]> inputData, int count, int inputOffset)

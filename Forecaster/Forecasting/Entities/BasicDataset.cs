@@ -20,6 +20,40 @@ namespace Forecaster.Forecasting.Entities
             Close = close;
         }
 
+        public BasicDataset(DateTime date, double close)
+        {
+            Date = date;
+            Close = (decimal)close;
+        }
+
+        public BasicDataset(string stockLine)
+        {
+            var stockStringValues = stockLine.Split(',');
+
+            ApplyStockStringValues(stockStringValues);
+        }
+
+        public BasicDataset(string[] stockStringValues)
+        {
+            ApplyStockStringValues(stockStringValues);
+        }
+
+        protected virtual void ApplyStockStringValues(string[] stockStringValues)
+        {
+            for (int i = 0; i < stockStringValues.Length && i < 8; ++i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        Date = DateTime.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        break;
+                    case 1:
+                        Close = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        break;
+                }
+            }
+        }
+
         public override string ToString()
         {
             string datasetString = "";

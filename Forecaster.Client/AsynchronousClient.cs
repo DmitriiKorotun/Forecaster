@@ -46,6 +46,9 @@ namespace Forecaster.Client
             // Connect to a remote device.  
             try
             {
+                LastRaisedException = null;
+                connectDone.Reset();
+
                 // Establish the remote endpoint for the socket.   
                 IPHostEntry ipHostInfo = Dns.GetHostEntry(hostName);
                 IPAddress ipAddress = ipHostInfo.AddressList[0];

@@ -70,6 +70,8 @@
     <Compile Include="Drawing\FormatterManager.cs" />
     <Compile Include="Drawing\Painter.cs" />
     <Compile Include="Drawing\ResponseConverter.cs" />
+    <Compile Include="IO\IReader.cs" />
+    <Compile Include="IO\SystemReader.cs" />
     <Compile Include="Localization\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -83,8 +85,14 @@
     <Compile Include="Local\Reader.cs" />
     <Compile Include="Local\Writer.cs" />
     <Compile Include="Logging\RamLogger.cs" />
+    <Compile Include="MVVM\Async\IErrorHandler.cs" />
+    <Compile Include="MVVM\Async\NotifyTaskCompletion.cs" />
+    <Compile Include="MVVM\Async\TaskUtilities.cs" />
+    <Compile Include="MVVM\Entities\AsyncCommand.cs" />
+    <Compile Include="MVVM\Entities\AsyncCommandBase.cs" />
     <Compile Include="MVVM\Entities\ComparsionItemControlData.cs" />
     <Compile Include="MVVM\Entities\DialogCloser.cs" />
+    <Compile Include="MVVM\Entities\IAsyncCommand.cs" />
     <Compile Include="MVVM\Entities\RelayCommand.cs" />
     <Compile Include="MVVM\IO\Win32IO.cs" />
     <Compile Include="MVVM\IO\IOService.cs" />

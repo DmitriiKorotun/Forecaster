@@ -73,8 +73,7 @@ namespace Forecaster.Client.Drawing
 
             IEnumerable<LineSeries> newLineSeriesRange = new DiagrammBuilder().CreateLineSeriesRange(csvStockList);
 
-            foreach (LineSeries newLineSeries in newLineSeriesRange)
-                Series.Add(newLineSeries);
+            Series.AddRange(newLineSeriesRange);
         }
 
         public void UpdateAxisLimit()

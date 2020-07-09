@@ -34,7 +34,7 @@ namespace Forecaster.Client
         public event EventHandler<ExceptionReportEventArgs> ExceptionReport;
 
         public delegate void ResponseHandler(byte[] data);
-        public event ResponseHandler Transfer;
+        public event ResponseHandler OnResponseReceived;
 
         private void OnExceptionReport(Exception exception)
         {
@@ -168,7 +168,7 @@ namespace Forecaster.Client
 
                 responseBytes = state.receivedData.SelectMany(a => a).ToArray();
 
-                Transfer?.Invoke(responseBytes);
+                //OnResponseReceived?.Invoke(responseBytes);
 
                 //ClientController.HandleResponse(responseBytes);
             }

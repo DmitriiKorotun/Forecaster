@@ -1,6 +1,7 @@
 ﻿using Csv;
 using Forecaster.Client.CSV;
 using Forecaster.Client.Drawing;
+using Forecaster.Client.IO;
 using Forecaster.Client.Local;
 using Forecaster.Client.MVVM.Config;
 using Forecaster.Client.MVVM.Entities;
@@ -11,11 +12,13 @@ using Forecaster.Client.Properties;
 using LiveCharts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Forecaster.Client.MVVM.ViewModels
 {
@@ -91,55 +94,56 @@ namespace Forecaster.Client.MVVM.ViewModels
             }
         }
 
-        private AsynchronousClient Client { get; set; }
+        public Dictionary<ushort, string> Algorithms { get; set; }
+
+        private ushort selectedAlgorithm;
+        public ushort SelectedAlgorithm
+        {
+            get { return selectedAlgorithm; }
+            set
+            {
+                selectedAlgorithm = value;
+                OnPropertyChanged("SelectedAlgorithm");
+            }
+        }
+
+        private const string defaultPathToStockFile = "C:/Users/korot/source/repos/Forecaster/ForecasterServer/bin/Debug/fortests/NSE-TATAGLOBAL11.csv";
+        private string pathToStockFile = defaultPathToStockFile;
+        public string PathToStockFile
+        {
+            get { return pathToStockFile; }
+            set
+            {
+                pathToStockFile = value;
+                OnPropertyChanged("PathToStockFile");
+            }
+        }
 
         public Painter DiagrammPainter { get; set; }
 
         public InputGBoxesVisual InputGroupBoxesVisual { get; set; }
 
-        private byte[] StockCsvData { get; set; }
-
-        private bool IsManualSelected { get; set; }
-
-        private List<Dictionary<string, string>> Predictions { get; set; }
-
-        public Dictionary<ushort, string> Algorithms { get; set; }
-
-        private ushort selectedAlgorithm;
-        public ushort SelectedAlgorithm 
-        {
-            get { return selectedAlgorithm; }
-            set 
-            {
-                selectedAlgorithm = value;
-                OnPropertyChanged("SelectedAlgorithm");
-            } 
-        }
-
-        private bool IsDataTransfering { get; set; } = false;
-
-        private const string defaultPathToStockFile = "C:/Users/korot/source/repos/Forecaster/ForecasterServer/bin/Debug/fortests/NSE-TATAGLOBAL11.csv";
-
-        private string pathToStockFile = defaultPathToStockFile;
-        public string PathToStockFile 
-        { 
-            get { return pathToStockFile; } 
-            set 
-            { 
-                pathToStockFile = value;
-                OnPropertyChanged("PathToStockFile");
-            } 
-        }
-
-        private IOService IoService { get; set; }
-        private IConfigProvider ConfigProvider { get; set; }
-     
         public ICommand OpenManualInputWindowCommand { get; private set; }
         public ICommand OpenSettingsWindowCommand { get; private set; }
         public ICommand OpenPredictionsComparsionWindowCommand { get; private set; }
         public ICommand BuildChartCommand { get; private set; }
         public ICommand ChoseStockFileCommand { get; private set; }
         public ICommand UploadDataCommand { get; private set; }
+        public IAsyncCommand LolKek { get; private set; }
+
+        private AsynchronousClient Client { get; set; }
+
+        private List<Dictionary<string, string>> Predictions { get; set; }
+
+        private byte[] StockCsvData { get; set; }
+
+        private bool IsManualSelected { get; set; }
+
+        private bool IsSendButtonDisabled { get; set; } = false;
+
+        private IOService IoService { get; set; }
+        private IConfigProvider ConfigProvider { get; set; }
+
 
         public ClientWindowViewModel()
         {
@@ -151,37 +155,18 @@ namespace Forecaster.Client.MVVM.ViewModels
 
             ConfigProvider = new SettingsProvider();
 
-            ClientController.TransferPredictions += HandlePredictions;
+            //ClientController.TransferPredictions += HandlePredictions;
 
-            InitAlgorithms();
+            InitializeAlgorithms();
 
             InitializeClient();
 
             InitializeCommands();
 
-            InitInputGBoxesVisual();
+            InitializeInputGBoxesVisual();
         }
 
-        private void HandlePredictions(Dictionary<string, string> restoredPredictions)
-        {
-            if (!Predictions.Contains(restoredPredictions))
-                Predictions.Add(restoredPredictions);
-
-            DrawPredictions(restoredPredictions);
-
-            IsDataTransfering = false;
-        }
-
-        private void DrawPredictions(Dictionary<string, string> restoredPredictions)
-        {
-            var predictionsToDraw = ResponseConverter.ConvertResponsePredictions(restoredPredictions);
-
-            var lineToDraw = new DiagrammBuilder().CreateLineSeriesRange(predictionsToDraw);
-
-            DiagrammPainter.AddLine(lineToDraw.ElementAt(0));
-        }
-
-        private void InitAlgorithms()
+        private void InitializeAlgorithms()
         {
             Algorithms = new Dictionary<ushort, string> {
                 { (ushort)PredictionAlgorithm.MovingAverage, "Moving Average" },
@@ -197,7 +182,7 @@ namespace Forecaster.Client.MVVM.ViewModels
         {
             Client = new AsynchronousClient();
 
-            Client.Transfer += ClientController.HandleResponse;
+            //Client.OnResponseReceived += HandleResponse;
         }
 
         private void InitializeCommands()
@@ -207,15 +192,57 @@ namespace Forecaster.Client.MVVM.ViewModels
             OpenPredictionsComparsionWindowCommand = new RelayCommand(OpenPredictionsComparsionWindow, (obj) => { return Predictions.Count > 0; });
             BuildChartCommand = new RelayCommand(BuildChart, (obj) => { return !string.IsNullOrEmpty(PathToStockFile); });
             ChoseStockFileCommand = new RelayCommand(ChoseStockFile);
-            UploadDataCommand = new RelayCommand(UploadData, (obj) => { return !IsDataTransfering; });
+            //UploadDataCommand = new RelayCommand(UploadData, (obj) => { return !IsSendButtonDisabled; });
+
+            LolKek = new AsyncCommand(UploadData, () => { return !IsSendButtonDisabled; });
         }
 
-        private void InitInputGBoxesVisual()
+        private void InitializeInputGBoxesVisual()
         {
             InputGroupBoxesVisual = new InputGBoxesVisual
             {
                 FileBorderThickness = 1
             };
+        }
+
+        private void OpenManualInputWindow()
+        {
+            ManualInputViewModel manualInputContext = new ManualInputViewModel();
+
+            WindowService.ShowDialog(manualInputContext);
+
+            if (manualInputContext.DialogResult == true)
+            {
+                StockCsvData = manualInputContext.ManualCsvBytes;
+
+                IsManualSelected = true;
+            }
+        }
+
+        private void OpenSettingsWindow()
+        {
+            SettingsViewModel settingsContext = new SettingsViewModel();
+
+            ChartInformation oldChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
+
+            WindowService.ShowDialog(settingsContext);
+
+            ChartInformation newChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
+
+            if (!oldChartInfo.Equals(newChartInfo))
+                DiagrammPainter.UpdateAxisLimit();
+        }
+
+        private void OpenPredictionsComparsionWindow()
+        {
+            if (Predictions.Count < 1)
+                MessageBox.Show(Localization.Strings.PredictionsToCompareIsEmpty);
+            else
+            {
+                PredictionsComparsionViewModel predictionsComparsionContext = new PredictionsComparsionViewModel(Predictions);
+
+                WindowService.ShowWindow(predictionsComparsionContext);
+            }
         }
 
         public void BuildChart()
@@ -229,7 +256,7 @@ namespace Forecaster.Client.MVVM.ViewModels
                 else
                     throw new ArgumentNullException("Csv content wasn't initalized or empty");
             }
-            catch(ArgumentNullException ex)
+            catch (ArgumentNullException ex)
             {
                 if (ex.Message == Localization.Strings.ManualDataNotEntered)
                     MessageBox.Show(Localization.Strings.ManualDataNotEntered);
@@ -272,82 +299,45 @@ namespace Forecaster.Client.MVVM.ViewModels
             DiagrammPainter.UpdateSeries(csvDictionary);
         }
 
-        private void OpenManualInputWindow()
-        {
-            ManualInputViewModel manualInputContext = new ManualInputViewModel();
-
-            WindowService.ShowDialog(manualInputContext);
-
-            if (manualInputContext.DialogResult == true)
-            {
-                StockCsvData = manualInputContext.ManualCsvBytes;
-
-                IsManualSelected = true;
-            }
-        }
-
-        private void OpenSettingsWindow()
-        {
-            SettingsViewModel settingsContext = new SettingsViewModel();
-
-            ChartInformation oldChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
-
-            WindowService.ShowDialog(settingsContext);
-
-            ChartInformation newChartInfo = new ChartInformation(settingsContext.ScopeStart, settingsContext.ScopeEnd, settingsContext.IsChartPeriodSelected);
-
-            if(!oldChartInfo.Equals(newChartInfo))
-                DiagrammPainter.UpdateAxisLimit();
-        }
-
-        private void OpenPredictionsComparsionWindow()
-        {
-            if (Predictions.Count < 1)
-                MessageBox.Show(Localization.Strings.PredictionsToCompareIsEmpty);
-            else
-            {
-                PredictionsComparsionViewModel predictionsComparsionContext = new PredictionsComparsionViewModel(Predictions);
-
-                WindowService.ShowWindow(predictionsComparsionContext);
-            }
-        }
-
         private void ChoseStockFile()
         {
             string selectedPath = IoService.OpenFileDialog(defaultPathToStockFile);
 
             if (!string.IsNullOrEmpty(selectedPath))
-            {
                 PathToStockFile = selectedPath;
-            }
             else
                 IsManualSelected = false;
         }
 
-        private void UploadData()
+        private async Task UploadData()
         {
             try
             {
-                IsDataTransfering = true;
+                IsSendButtonDisabled = true;
 
-                SendData();
+                using (Client)
+                {
+                    await SendData();
+                    byte[] response = await ReceiveResponseAsync();
+                    HandleResponse(response);
+                }
             }
-            catch(ArgumentNullException ex)
+            catch (ArgumentNullException ex)
             {
                 if (ex.Message == Localization.Strings.ManualDataNotEntered)
                 {
                     MessageBox.Show(Localization.Strings.ManualDataNotEntered);
-                    IsDataTransfering = false;
+                    IsSendButtonDisabled = false;
                 }
                 else
                     throw ex;
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 if (ex.Message == Localization.Strings.EmptyPathFileException)
                 {
                     MessageBox.Show(Localization.Strings.EmptyPathFileException);
-                    IsDataTransfering = false;
+                    IsSendButtonDisabled = false;
                 }
                 else
                     throw ex;
@@ -355,19 +345,18 @@ namespace Forecaster.Client.MVVM.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(Localization.Strings.ServerHandleException);
-
-                IsDataTransfering = false;
+                IsSendButtonDisabled = false;
             }
         }
 
-        private void SendData()
+        private async Task SendData()
         {
+            Task sendDataTask;
+
             if (IsManualSelected)
             {
                 if (StockCsvData != null)
-                {
-                    ClientController.SendFile(StockCsvData, selectedAlgorithm, Client);
-                }
+                    sendDataTask = ClientController.SendDataAsync(StockCsvData, selectedAlgorithm, Client);
                 else
                     throw new ArgumentNullException(Localization.Strings.ManualDataNotEntered);
             }
@@ -376,8 +365,38 @@ namespace Forecaster.Client.MVVM.ViewModels
                 if (string.IsNullOrEmpty(PathToStockFile))
                     throw new ArgumentException(Localization.Strings.EmptyPathFileException);
 
-                ClientController.SendFile(PathToStockFile, selectedAlgorithm, Client);
+                sendDataTask = ClientController.SendFileAsync(PathToStockFile, selectedAlgorithm, Client);
             }
+
+            await sendDataTask;
+        }
+
+        private async Task<byte[]> ReceiveResponseAsync()
+        {
+            Task<byte[]> receiveDataTask = ClientController.ReceiveResponseAsync(Client);
+
+            return await receiveDataTask;
+        }
+
+        private void HandleResponse(byte[] data)
+        {
+            var restoredPredictions = ClientController.ParseResponse(data).Predictions;
+
+            if (!Predictions.Contains(restoredPredictions))
+                Predictions.Add(restoredPredictions);
+
+            DrawPredictions(restoredPredictions);
+
+            IsSendButtonDisabled = false;
+        }
+
+        private void DrawPredictions(Dictionary<string, string> restoredPredictions)
+        {
+            var predictionsToDraw = ResponseConverter.ConvertResponsePredictions(restoredPredictions);
+
+            var lineToDraw = new DiagrammBuilder().CreateLineSeriesRange(predictionsToDraw);
+
+            DiagrammPainter.AddLine(lineToDraw.ElementAt(0));
         }
     }
 }

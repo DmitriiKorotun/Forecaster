@@ -102,7 +102,7 @@
                     Command="{Binding BuildChartCommand}"/>
             <Button Grid.Row="2" Content="{x:Static localization:Strings.Upload}" 
                     VerticalAlignment="Center" Grid.Column="1" Margin="5, 0"
-                    Command="{Binding UploadDataCommand}"/>
+                    Command="{Binding UploadDataAsyncCommand}"/>
             <ComboBox Grid.Row="1" Name="cb_algList" VerticalAlignment="Center"
                       SelectedValuePath="Key" DisplayMemberPath="Value"
                       ItemsSource="{Binding Algorithms}"

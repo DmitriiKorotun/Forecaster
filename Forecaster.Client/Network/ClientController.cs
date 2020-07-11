@@ -1,4 +1,5 @@
-﻿using Forecaster.Net;
+﻿using Forecaster.Client.IO;
+using Forecaster.Net;
 using Forecaster.Net.Requests;
 using Forecaster.Net.Responses;
 using System;
@@ -15,87 +16,86 @@ namespace Forecaster.Client.Network
 {
     public static class ClientController
     {
-        public delegate void PredictionHandler(Dictionary<string, string> restoredPredictions);
-        public static event PredictionHandler TransferPredictions;
+        private static IReader Reader { get; set; } = new SystemReader();
 
-        public static byte[] SendFile(string path, ushort selectedAlgortihm, ClientWindow window)
-        {
-            try
-            {
-                byte[] fileBytes = ReadFile(path),
-                    requestBytes = CreateFTRequestBytes(fileBytes, selectedAlgortihm);
-
-                using (AsynchronousClient client = new AsynchronousClient())
-                {
-                    client.ExceptionReport += (sender, e) =>
-                    {
-                        if (e.Exception.Message == "lol")
-                            return;
-                        //window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
-                        //    MessageBox.Show(e.Exception.Message, Application.ProductName,
-                        //        MessageBoxButtons.OK, MessageBoxIcon.Error)));
-                    };
-
-                    client.Connect(Dns.GetHostName());
-
-                    client.SendData(requestBytes);
-
-                    var result = client.ReceiveResponse();
-
-                    return result;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static byte[] SendFile(string path, ushort selectedAlgortihm, AsynchronousClient client)
+        public static void SendFile(string path, ushort selectedAlgortihm, AsynchronousClient client)
         {
             byte[] fileBytes;
+
             try
             {
-                fileBytes = ReadFile(path);
+                fileBytes = Reader.ReadAllBytes(path);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
 
-            return SendFile(fileBytes, selectedAlgortihm, client);
+            SendData(fileBytes, selectedAlgortihm, client);
         }
 
-        public static byte[] SendFile(byte[] dataToPredict, ushort selectedAlgortihm, AsynchronousClient client)
+        public static async Task SendFileAsync(string path, ushort selectedAlgortihm, AsynchronousClient client)
+        {
+            Task<byte[]> readFileTask = ReadFileAsync(path);
+
+            byte[] fileBytes = await readFileTask.ConfigureAwait(false);
+
+            await SendDataAsync(fileBytes, selectedAlgortihm, client).ConfigureAwait(false);
+        }
+
+        private static async Task<byte[]> ReadFileAsync(string path)
+        {
+            return await Task.Run(() =>
+            {
+                byte[] fileBytes;
+
+                try
+                {
+                    fileBytes = Reader.ReadAllBytes(path);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+                return fileBytes;
+            }).ConfigureAwait(false);
+        }
+
+        public static void SendData(byte[] dataToPredict, ushort selectedAlgortihm, AsynchronousClient client)
         {
             try
             {
                 byte[] requestBytes = CreateFTRequestBytes(dataToPredict, selectedAlgortihm);
 
-                using (client)
+                client.ExceptionReport += (sender, e) =>
                 {
-                    client.ExceptionReport += (sender, e) =>
-                    {
-                        client.Dispose();
-                        //window.Dispatcher.BeginInvoke((MethodInvoker)(() =>
-                        //    MessageBox.Show(e.Exception.Message, Application.ProductName,
-                        //        MessageBoxButtons.OK, MessageBoxIcon.Error)));
-                    };
+                    client.Dispose();
+                };
 
-                    client.Connect(Dns.GetHostName());
+                client.Connect(Dns.GetHostName());
 
-                    client.SendData(requestBytes);
-
-                    var result = client.ReceiveResponse();
-
-                    return result;
-                }
-
+                client.SendData(requestBytes);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        public static async Task SendDataAsync(byte[] dataToPredict, ushort selectedAlgortihm, AsynchronousClient client)
+        {
+            await Task.Run(() => SendData(dataToPredict, selectedAlgortihm, client)).ConfigureAwait(false);
+        }
+
+        public static byte[] ReceiveResponse(AsynchronousClient client)
+        {
+            return client.ReceiveResponse();
+        }
+
+        public static async Task<byte[]> ReceiveResponseAsync(AsynchronousClient client)
+        {
+            return await Task.Run(() => ReceiveResponse(client)).ConfigureAwait(false);
         }
 
         public static PredictionResponse ParseResponse(byte[] responseBytes)
@@ -112,14 +112,6 @@ namespace Forecaster.Client.Network
             return response;
         }
 
-        public static void HandleResponse(byte[] responseBytes)
-        {
-            PredictionResponse response = ParseResponse(responseBytes);
-
-            TransferPredictions?.Invoke(response.Predictions);
-        }
-
-
         private static byte[] CreateFTRequestBytes(byte[] fileBytes, ushort selectedAlgorithm)
         {
             FileTransferRequest request = new FileTransferRequest(fileBytes, selectedAlgorithm);
@@ -132,27 +124,6 @@ namespace Forecaster.Client.Network
             RequestManager requestManager = new RequestManager();
 
             return requestManager.CreateByteRequest(request);
-        }
-
-        private static byte[] ReadFile(string path)
-        {
-            byte[] fileBytes;
-
-            if (File.Exists(path))
-            {
-                try
-                {
-                    fileBytes = File.ReadAllBytes(path);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            else
-                throw new FileNotFoundException("File wasn't found");
-
-            return fileBytes;
         }
     }
 }

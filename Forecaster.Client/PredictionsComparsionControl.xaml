@@ -46,7 +46,7 @@
 
 
                                 <Button Content="{x:Static localization:Strings.Save}"
-                                        Command="{Binding DataContext.SaveItemResultCommand,
+                                        Command="{Binding DataContext.SaveItemResultAsyncCommand,
                                         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}"
                                         Grid.Row="1" Margin="10"

@@ -19,11 +19,13 @@ namespace Forecaster.Client.MVVM.ViewModels
         public ICommand CloseCommand { get; set; }
         public RelayCommand<ComparsionItemControlData> RemoveItemCommand { get; set; }
         public RelayCommand<ComparsionItemControlData> SaveItemResultCommand { get; set; }
+        public AsyncCommand<ComparsionItemControlData> SaveItemResultAsyncCommand { get; private set; }
 
         private List<Dictionary<string, string>> Predictions { get; set; }
         private IOService IoService { get; set; }
 
         private const string defaultName = "Predictions.txt";
+        private bool IsDataSaving { get; set; } = false;
 
         public PredictionsComparsionViewModel(List<Dictionary<string, string>> predictions)
         {
@@ -43,7 +45,8 @@ namespace Forecaster.Client.MVVM.ViewModels
             CloseCommand = new RelayCommand(OnClosingRequest);
 
             RemoveItemCommand = new RelayCommand<ComparsionItemControlData>(RemoveItem);
-            SaveItemResultCommand = new RelayCommand<ComparsionItemControlData>(SaveItemResult);           
+            SaveItemResultCommand = new RelayCommand<ComparsionItemControlData>(SaveItemResult);
+            SaveItemResultAsyncCommand = new AsyncCommand<ComparsionItemControlData>(SaveItemResultAsync, () => { return !IsDataSaving; });
         }
 
         private IEnumerable<ComparsionItemControlData> CreateComparsionItemControlDataRange(List<Dictionary<string, string>> predictions)
@@ -69,14 +72,30 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         private void SaveItemResult(object item)
         {
-            if (item is ComparsionItemControlData comparsionItem)
+            try
             {
-                string csvConverted = ConvertToCsv(comparsionItem.Predictions);
+                if (item is ComparsionItemControlData comparsionItem)
+                {
+                    string csvConverted = ConvertToCsv(comparsionItem.Predictions);
 
-                IoService.SaveFileDialog(csvConverted, defaultName);
+                    IoService.SaveFileDialog(csvConverted, defaultName);
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
             }
-            else
-                throw new ArgumentException();
+            finally
+            {
+                IsDataSaving = false;
+            }
+        }
+
+        private async Task SaveItemResultAsync(object item)
+        {
+            IsDataSaving = true;
+
+            await Task.Run(() => SaveItemResult(item));
         }
 
         protected override void AssignArguments()

@@ -33,7 +33,7 @@ namespace Forecaster.Client.MVVM.Entities
             return !_isExecuting && (_canExecute?.Invoke() ?? true);
         }
 
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(object parameter)
         {
             if (CanExecute())
             {
@@ -64,22 +64,22 @@ namespace Forecaster.Client.MVVM.Entities
 
         void ICommand.Execute(object parameter)
         {
-            ExecuteAsync().FireAndForgetSafeAsync(_errorHandler);
+            ExecuteAsync(parameter).FireAndForgetSafeAsync(_errorHandler);
         }
         #endregion
     }
 
-    public class AsyncCommand<TResult> : IAsyncCommand
+    public class AsyncCommand<T> : IAsyncCommand
     { 
         public event EventHandler CanExecuteChanged;
 
         private bool _isExecuting;
-        private readonly Func<Task> _execute;
+        private readonly Func<T, Task> _execute;
         private readonly Func<bool> _canExecute;
         private readonly IErrorHandler _errorHandler;
 
         public AsyncCommand(
-            Func<Task> execute,
+            Func<T, Task> execute,
             Func<bool> canExecute = null,
             IErrorHandler errorHandler = null)
         {
@@ -93,14 +93,14 @@ namespace Forecaster.Client.MVVM.Entities
             return !_isExecuting && (_canExecute?.Invoke() ?? true);
         }
 
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(object parameter)
         {
             if (CanExecute())
             {
                 try
                 {
                     _isExecuting = true;
-                    await _execute();
+                    await _execute((T) parameter);
                 }
                 finally
                 {
@@ -124,7 +124,7 @@ namespace Forecaster.Client.MVVM.Entities
 
         void ICommand.Execute(object parameter)
         {
-            ExecuteAsync().FireAndForgetSafeAsync(_errorHandler);
+            ExecuteAsync((T) parameter).FireAndForgetSafeAsync(_errorHandler);
         }
         #endregion
     }

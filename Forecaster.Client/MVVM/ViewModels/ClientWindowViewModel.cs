@@ -129,7 +129,7 @@ namespace Forecaster.Client.MVVM.ViewModels
         public ICommand BuildChartCommand { get; private set; }
         public ICommand ChoseStockFileCommand { get; private set; }
         public ICommand UploadDataCommand { get; private set; }
-        public IAsyncCommand LolKek { get; private set; }
+        public IAsyncCommand UploadDataAsyncCommand { get; private set; }
 
         private AsynchronousClient Client { get; set; }
 
@@ -194,7 +194,7 @@ namespace Forecaster.Client.MVVM.ViewModels
             ChoseStockFileCommand = new RelayCommand(ChoseStockFile);
             //UploadDataCommand = new RelayCommand(UploadData, (obj) => { return !IsSendButtonDisabled; });
 
-            LolKek = new AsyncCommand(UploadData, () => { return !IsSendButtonDisabled; });
+            UploadDataAsyncCommand = new AsyncCommand(UploadData, () => { return !IsSendButtonDisabled; });
         }
 
         private void InitializeInputGBoxesVisual()
@@ -327,7 +327,6 @@ namespace Forecaster.Client.MVVM.ViewModels
                 if (ex.Message == Localization.Strings.ManualDataNotEntered)
                 {
                     MessageBox.Show(Localization.Strings.ManualDataNotEntered);
-                    IsSendButtonDisabled = false;
                 }
                 else
                     throw ex;
@@ -337,7 +336,6 @@ namespace Forecaster.Client.MVVM.ViewModels
                 if (ex.Message == Localization.Strings.EmptyPathFileException)
                 {
                     MessageBox.Show(Localization.Strings.EmptyPathFileException);
-                    IsSendButtonDisabled = false;
                 }
                 else
                     throw ex;
@@ -345,6 +343,10 @@ namespace Forecaster.Client.MVVM.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(Localization.Strings.ServerHandleException);
+                
+            }
+            finally
+            {
                 IsSendButtonDisabled = false;
             }
         }

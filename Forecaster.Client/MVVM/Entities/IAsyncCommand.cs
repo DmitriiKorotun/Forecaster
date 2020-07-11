@@ -9,7 +9,7 @@ namespace Forecaster.Client.MVVM.Entities
 {
     public interface IAsyncCommand : ICommand
     {
-        Task ExecuteAsync();
+        Task ExecuteAsync(object parameter);
         bool CanExecute();
     }
 }

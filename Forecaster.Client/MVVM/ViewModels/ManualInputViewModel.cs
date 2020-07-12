@@ -105,7 +105,7 @@ namespace Forecaster.Client.MVVM.ViewModels
 
         private void Apply()
         {
-            if (Entries.Count >= 10)
+            if (Entries.Count >= 20)
             {
                 IEnumerable<string> gridContent = ReadManualDataGrid();
 

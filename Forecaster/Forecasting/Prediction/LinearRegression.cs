@@ -10,18 +10,21 @@ using Accord.Math.Optimization.Losses;
 using Forecaster.DataConverters;
 using Forecaster.DataHandlers.DateTable;
 using Forecaster.DataHandlers.DatePart;
+using Forecaster.DataHandlers;
 
 namespace Forecaster.Forecasting.Prediction
 {
-    public class LinearRegression : IPredictionAlgorithm
+    public class LinearRegression : BasicAlgorithm, IPredictionAlgorithm
     {
-        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> datasets)
+        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> dataset)
         {
-            SplitSet(datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
+            CheckIncomingSet(dataset);
 
-            int totalCount = datasets.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
+            DatasetHandler.SplitSet(dataset, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
 
-            DataTable mscTable = GetTableForPrediction(datasets);
+            int totalCount = dataset.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
+
+            DataTable mscTable = GetTableForPrediction(dataset);
 
             IEnumerable<DateTime> predictedDates = GetPredictionDates(mscTable, trainingCount, controlCount);
 
@@ -130,17 +133,6 @@ namespace Forecaster.Forecasting.Prediction
             }
 
             return datasets;
-        }
-
-        private void SplitSet(IEnumerable<BasicDataset> datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet)
-        {
-            int datasetCount = datasets.Count(),
-                trainingSize = (int)Math.Ceiling(datasetCount * 0.8),
-                controlSize = datasetCount - trainingSize;
-
-            trainingSet = datasets.Take(trainingSize);
-
-            controlSet = datasets.Skip(trainingSize).Take(controlSize);
         }
     }
 }

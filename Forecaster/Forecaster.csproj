@@ -67,13 +67,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataHandlers\DatasetHandler.cs" />
     <Compile Include="DataHandlers\DataTableConverter.cs" />
     <Compile Include="DataHandlers\DatePart\DatePart.cs" />
     <Compile Include="DataHandlers\DatePart\DatePartCreator.cs" />
     <Compile Include="DataHandlers\DateTable\DateTableHandler.cs" />
+    <Compile Include="DataHandlers\Standartization\DataStandardizer.cs" />
     <Compile Include="Forecasting\Entities\BasicDataset.cs" />
     <Compile Include="Forecasting\Entities\StockDataset.cs" />
     <Compile Include="Forecasting\Prediction\AutoArima.cs" />
+    <Compile Include="Forecasting\Prediction\BasicAlgorithm.cs" />
     <Compile Include="Forecasting\Prediction\IPredictionAlgorithm.cs" />
     <Compile Include="Forecasting\Prediction\KNearestNeighbors.cs" />
     <Compile Include="Forecasting\Prediction\LinearRegression.cs" />

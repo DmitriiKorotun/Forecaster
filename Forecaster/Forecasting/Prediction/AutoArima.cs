@@ -1,6 +1,7 @@
 ﻿using Extreme.DataAnalysis;
 using Extreme.Mathematics;
 using Extreme.Statistics.TimeSeriesAnalysis;
+using Forecaster.DataHandlers;
 using Forecaster.Forecasting.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,13 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Forecasting.Prediction
 {
-    public class AutoArima : IPredictionAlgorithm
+    public class AutoArima : BasicAlgorithm, IPredictionAlgorithm
     {
-        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> datasets)
+        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> dataset)
         {
-            SplitSet(datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
+            CheckIncomingSet(dataset);
+
+            DatasetHandler.SplitSet(dataset, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
 
             int trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
 
@@ -93,17 +96,6 @@ namespace Forecaster.Forecasting.Prediction
             model.Fit();
 
             return model.LogLikelihood;
-        }
-
-        private static void SplitSet(IEnumerable<BasicDataset> datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet)
-        {
-            int datasetCount = datasets.Count(),
-                trainingSize = (int)Math.Ceiling(datasetCount * 0.8),
-                controlSize = datasetCount - trainingSize;
-
-            trainingSet = datasets.Take(trainingSize);
-
-            controlSet = datasets.Skip(trainingSize).Take(controlSize);
         }
 
         private List<BasicDataset> ConvertToDatasetRange(DateTime[] dates, double[] closes)

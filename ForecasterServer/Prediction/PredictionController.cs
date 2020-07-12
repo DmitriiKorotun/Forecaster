@@ -1,5 +1,6 @@
 ﻿using Accord;
 using Csv;
+using Forecaster.DataHandlers;
 using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Net;
@@ -17,7 +18,7 @@ namespace Forecaster.Server.Prediction
     {
         public static IEnumerable<BasicDataset> Predict(List<BasicDataset> dataset, IPredictionAlgorithm predictionAlgorithm)
         {
-            List<BasicDataset> orderedSet = OrderSet(dataset);
+            List<BasicDataset> orderedSet = DatasetHandler.OrderByDate(dataset).ToList();
 
             return predictionAlgorithm.Predict(orderedSet);
         }
@@ -60,16 +61,6 @@ namespace Forecaster.Server.Prediction
             datasets = datasetCreator.CreateFromCsv(csvData).ToList();
 
             return Predict(datasets.ToList(), predictionAlgorithm);
-        }
-
-        private static List<BasicDataset> OrderSet(List<BasicDataset> dataset, bool isAscending = true)
-        {
-            List<BasicDataset> orderedSet = dataset.OrderBy(item => item.Date).ToList();
-
-            if (!isAscending)
-                orderedSet.Reverse();
-
-            return orderedSet;
         }
 
         private static List<string[]> ReadCSV(string pathToCSV)

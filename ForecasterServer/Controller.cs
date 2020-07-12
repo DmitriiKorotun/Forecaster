@@ -1,4 +1,5 @@
-﻿using Forecaster.Forecasting.Entities;
+﻿using Forecaster.DataHandlers.Standartization;
+using Forecaster.Forecasting.Entities;
 using Forecaster.Forecasting.Prediction;
 using Forecaster.Net;
 using Forecaster.Net.Requests;
@@ -63,7 +64,10 @@ namespace Forecaster.Server
         {
             IPredictionAlgorithm algorithm = ChosePredictionAlgorithm(request.SelectedAlgortihms);
 
-            return PredictionController.Predict(request.FileBytes, algorithm);
+            IEnumerable<BasicDataset> prediction = PredictionController.Predict(request.FileBytes, algorithm),
+                roundedPrediction = DataStandardizer.RoundClose(prediction, 2);
+
+            return roundedPrediction;
         }
 
         private static IPredictionAlgorithm ChosePredictionAlgorithm(ushort algorithmValue)

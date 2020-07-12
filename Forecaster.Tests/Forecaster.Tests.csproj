@@ -53,8 +53,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatasetCreator.cs" />
     <Compile Include="MovingAverageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LinearRegressionTests.cs" />
+    <Compile Include="KNearestNeighboursTests.cs" />
+    <Compile Include="AutoArimaTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -66,7 +70,7 @@
       <Name>Csv</Name>
     </ProjectReference>
     <ProjectReference Include="..\ForecasterServer\Forecaster.Server.csproj">
-      <Project>{e5471e3f-02b9-495d-8249-af36c683e1e5}</Project>
+      <Project>{E5471E3F-02B9-495D-8249-AF36C683E1E5}</Project>
       <Name>Forecaster.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\Forecaster\Forecaster.csproj">

@@ -1,6 +1,7 @@
 ﻿using Accord.Math;
 using Accord.Statistics.Models.Regression.Linear;
 using Forecaster.DataConverters;
+using Forecaster.DataHandlers;
 using Forecaster.DataHandlers.DatePart;
 using Forecaster.DataHandlers.DateTable;
 using Forecaster.Forecasting.Entities;
@@ -13,15 +14,17 @@ using System.Threading.Tasks;
 
 namespace Forecaster.Forecasting.Prediction
 {
-    public class KNearestNeighbors : IPredictionAlgorithm
+    public class KNearestNeighbors : BasicAlgorithm, IPredictionAlgorithm
     {
-        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> datasets)
+        public IEnumerable<BasicDataset> Predict(IEnumerable<BasicDataset> dataset)
         {
-            SplitSet(datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
+            CheckIncomingSet(dataset);
 
-            int totalCount = datasets.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
+            DatasetHandler.SplitSet(dataset, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet);
+
+            int totalCount = dataset.Count(), trainingCount = trainingSet.Count(), controlCount = controlSet.Count();
             //read data
-            DataTable mscTable = DataTableConverter.ConvertToDateTable(datasets);
+            DataTable mscTable = DataTableConverter.ConvertToDateTable(dataset);
 
             DateTableHandler dateTableHandler = new DateTableHandler();
 
@@ -122,7 +125,6 @@ namespace Forecaster.Forecasting.Prediction
             return values;
         }
 
-
         private BasicDataset ConvertToDataset(DateTime date, decimal close)
         {
             return new BasicDataset(date, close);
@@ -159,17 +161,6 @@ namespace Forecaster.Forecasting.Prediction
             }
 
             return datasets;
-        }
-
-        private void SplitSet(IEnumerable<BasicDataset> datasets, out IEnumerable<BasicDataset> trainingSet, out IEnumerable<BasicDataset> controlSet)
-        {
-            int datasetCount = datasets.Count(),
-                trainingSize = (int)Math.Ceiling(datasetCount * 0.8),
-                controlSize = datasetCount - trainingSize;
-
-            trainingSet = datasets.Take(trainingSize);
-
-            controlSet = datasets.Skip(trainingSize).Take(controlSize);
         }
 
         private static List<DataColumn> CreateNewColumnList()

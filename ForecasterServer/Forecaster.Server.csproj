@@ -109,7 +109,7 @@
       <Name>Csv</Name>
     </ProjectReference>
     <ProjectReference Include="..\Forecaster\Forecaster.csproj">
-      <Project>{4df1528c-87be-49ec-a804-f4fb2e7363c5}</Project>
+      <Project>{4DF1528C-87BE-49EC-A804-F4FB2E7363C5}</Project>
       <Name>Forecaster</Name>
     </ProjectReference>
   </ItemGroup>

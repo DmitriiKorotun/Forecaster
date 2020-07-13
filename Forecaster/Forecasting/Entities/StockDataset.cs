@@ -36,28 +36,28 @@ namespace Forecaster.Forecasting.Entities
                 switch (i)
                 {
                     case 0:
-                        Date = DateTime.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        Date = ParseDate(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 1:
-                        Open = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        Open = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 2:
-                        High = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        High = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 3:
-                        Low = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        Low = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 4:
-                        Last = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        Last = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 5:
-                        Close = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        Close = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 6:
-                        TotalTradeQuantity = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        TotalTradeQuantity = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                     case 7:
-                        Turnover = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
+                        Turnover = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
                         break;
                 }
             }

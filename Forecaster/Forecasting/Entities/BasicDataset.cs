@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -28,6 +29,9 @@ namespace Forecaster.Forecasting.Entities
 
         public BasicDataset(string stockLine)
         {
+            if (string.IsNullOrEmpty(stockLine))
+                throw new ArgumentNullException("stockLine string is null or empty; called in BasicDataset constructor");
+
             var stockStringValues = stockLine.Split(',');
 
             ApplyStockStringValues(stockStringValues);
@@ -35,23 +39,52 @@ namespace Forecaster.Forecasting.Entities
 
         public BasicDataset(string[] stockStringValues)
         {
+            if (stockStringValues is null)
+                throw new ArgumentNullException("stockStringValues is null and can't be used to initialize BasicDataset");
+            else if (stockStringValues.Length < 1)
+                throw new ArgumentException("stockStringValues is empty and can't be used to initialize BasicDataset");
+
             ApplyStockStringValues(stockStringValues);
         }
 
         protected virtual void ApplyStockStringValues(string[] stockStringValues)
         {
-            for (int i = 0; i < stockStringValues.Length && i < 8; ++i)
+            for (int i = 0; i < stockStringValues.Length && i < 2; ++i)
             {
                 switch (i)
                 {
                     case 0:
-                        Date = DateTime.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
-                        break;
+                        {
+                            Date = ParseDate(stockStringValues[i], CultureInfo.InvariantCulture);
+                            break;
+                        }
                     case 1:
-                        Close = decimal.Parse(stockStringValues[i], CultureInfo.InvariantCulture);
-                        break;
+                        {
+                            Close = ParseDecimal(stockStringValues[i], CultureInfo.InvariantCulture);
+                            break;
+                        }
                 }
             }
+        }
+
+        protected DateTime ParseDate(string dateStr, IFormatProvider provider)
+        {
+            bool isSucceeded = DateTime.TryParse(dateStr, provider, DateTimeStyles.None, out DateTime date);
+
+            if (!isSucceeded)
+                throw new FormatException("Couldn't convert date from stock string value to initialize BasicDataset");
+
+            return date;
+        }
+
+        protected decimal ParseDecimal(string decimalStr, IFormatProvider provider)
+        {
+            bool isSucceeded = decimal.TryParse(decimalStr, NumberStyles.Number, provider, out decimal value);
+
+            if (!isSucceeded)
+                throw new FormatException("Couldn't convert date from stock string value to initialize BasicDataset");
+
+            return value;
         }
 
         public override string ToString()
